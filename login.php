@@ -65,9 +65,11 @@ echo html_writer::end_tag('div');
 echo html_writer::tag('div', get_string('qrcode_instructions', 'auth_qrcode'), ['class' => 'text-center mb-3']);
 
 // Back to login.
+echo html_writer::start_tag('div', ['class' => 'text-center']);
 echo html_writer::tag('a', 'Return to Login', [
-    'href' => (new moodle_url('/'))->out(),
-    'class' => 'btn btn-secondary w-100',
+    'href' => (new moodle_url('/login/index.php'))->out(),
+    'class' => 'btn btn-secondary w-75',
 ]);
+echo html_writer::end_tag('div');
 
 echo $OUTPUT->footer();
