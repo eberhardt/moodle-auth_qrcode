@@ -144,7 +144,7 @@ class auth_plugin_qrcode extends auth_plugin_base {
     public function loginpage_idp_list($wantsurl) {
         // This is the URL the user will be sent to when clicking the button.
         // You should create a login.php file in your plugin directory to handle the QR logic.
-        $url = new moodle_url('/auth/qrcode/login.php', ['wantsurl' => $wantsurl]);
+        $url = new moodle_url('/auth/qrcode/login.php');
 
         // You can also specify an icon to be displayed on the button.
         // If you have an icon at auth/qrcode/pix/icon.svg:
