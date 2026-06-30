@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="auth/qrcode/db" VERSION="20250630" COMMENT="XMLDB file for Moodle auth/qrcode"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE name="qrcode_auth_sessions" COMMENT="Stores information to execute login">
+      <FIELDS>
+        <FIELD name="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="token"/>
+        <FIELD name="token" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="initial_sessionid"/>
+        <FIELD name="initial_sessionid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="token" NEXT="userid"/>
+        <FIELD name="userid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="initial_sessionid" NEXT="timecreated"/>
+        <FIELD name="timecreated" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="userid" NEXT="modified"/>
+        <FIELD name="modified" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" PREVIOUS="timecreated" UNSIGNED="true"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key" NEXT="sessionid" />
+        <KEY NAME="sessionid" TYPE="foreign" FIELDS="initial_sessionid" REFTABLE="sessions" REFFIELDS="id" PREVIOUS="primary" NEXT="userid"/>
+        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="sessionid"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="token" UNIQUE="true" FIELDS="token"/>
+      </INDEXES>
+  </TABLES>
+</XMLDB>
