@@ -4,7 +4,7 @@
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
-    <TABLE name="qrcode_auth_sessions" COMMENT="Stores information to execute login">
+    <TABLE name="auth_qrcode" COMMENT="Stores information to execute login">
       <FIELDS>
         <FIELD name="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="token"/>
         <FIELD name="token" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="initial_sessionid"/>
