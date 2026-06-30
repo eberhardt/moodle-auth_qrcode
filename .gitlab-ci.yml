@@ -1,0 +1,60 @@
+variables:
+  DEBIAN_FRONTEND: 'noninteractive'
+  COMPOSER_ALLOW_SUPERUSER: 1
+  COMPOSER_CACHE_DIR: "$CI_PROJECT_DIR/.cache/composer"
+  NPM_CONFIG_CACHE: "$CI_PROJECT_DIR/.cache/npm"
+  CI_BUILD_DIR: '/tmp/plugin'
+  MOODLE_BRANCH: "MOODLE_502_STABLE"
+  MOODLE_BEHAT_WWWROOT: 'http://localhost:8000'
+  MOODLE_BEHAT_WDHOST: 'http://behat:4444'
+  MOODLE_START_BEHAT_SERVERS: 'no'
+
+.moodle_plugin_base:
+  interruptible: true
+  stage: test
+  parallel:
+    matrix:
+      - PHP_VERSION: [ "8.3", "8.4" ]
+  services:
+    - name: selenium/standalone-chrome:140.0
+      alias: behat
+  cache:
+    key: "shared-moodle-ci"
+    paths:
+      - .cache/composer/
+      - .cache/npm/
+    policy: pull-push
+  image: ffhs/moodle-lms-plugin-ci:${PHP_VERSION}
+  before_script:
+    - mkdir -pv "$CI_BUILD_DIR"
+    - cp -ru "$CI_PROJECT_DIR/"* "$CI_BUILD_DIR"
+    # Setup test
+    - moodle-plugin-ci install --db-type=${DB_TYPE} --db-host=${DB_TYPE}
+    # Run Webserver for Behat
+    - '{ php -S 0.0.0.0:8000 -t "$CI_PROJECT_DIR/moodle" >/dev/null 2>&1 & }'
+  script:
+    - moodle-plugin-ci parallel
+
+mariadb:
+  extends: .moodle_plugin_base
+  services:
+    - name: mariadb:10
+      alias: mariadb
+      variables:
+        MYSQL_USER: root
+        MYSQL_ALLOW_EMPTY_PASSWORD: "true"
+        MYSQL_CHARACTER_SET_SERVER: "utf8mb4"
+        MYSQL_COLLATION_SERVER: "utf8mb4_unicode_ci"
+  variables:
+    DB_TYPE: "mariadb"
+
+postgres:
+  extends: .moodle_plugin_base
+  services:
+    - name: postgres:14
+      alias: pgsql
+      variables:
+        POSTGRES_USER: postgres
+        POSTGRES_HOST_AUTH_METHOD: trust
+  variables:
+    DB_TYPE: "pgsql"
