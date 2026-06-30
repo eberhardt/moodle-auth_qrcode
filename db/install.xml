@@ -21,5 +21,6 @@
       <INDEXES>
         <INDEX NAME="token" UNIQUE="true" FIELDS="token"/>
       </INDEXES>
+    </TABLE>
   </TABLES>
 </XMLDB>
