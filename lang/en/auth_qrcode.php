@@ -27,3 +27,4 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['pluginname'] = 'QR-Code';
 $string['privacy:metadata'] = 'Your metadata here'; //ToDo: Change me
+$string['qrcode_instructions'] = 'Scan the QR-Code with your mobile device.';

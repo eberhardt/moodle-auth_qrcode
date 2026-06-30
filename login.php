@@ -18,8 +18,57 @@
  * auth_qrcode login.php description here.
  *
  * @package    auth_qrcode
- * @copyright  2026  <>
+ * @copyright  2026 <>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-echo('you try to login');
+use auth_qrcode\qrcode_generator;
+
+require_once(__DIR__ . '/../../config.php');
+
+$context = context_system::instance();
+
+$PAGE->set_context($context);
+
+$PAGE->set_url('/auth/qrcode/login.php');
+$PAGE->set_pagelayout('login');
+$PAGE->set_title(get_string('pluginname', 'auth_qrcode'));
+$PAGE->set_heading(get_string('pluginname', 'auth_qrcode'));
+
+echo $OUTPUT->header();
+
+
+$logo = $OUTPUT->get_logo_url();
+if ($logo) {
+    echo html_writer::start_tag('div', ['id' => 'loginlogo', 'class' => 'd-flex justify-content-center mb-4']);
+
+    echo html_writer::empty_tag('img', [
+        'id' => 'logoimage',
+        'src' => $logo,
+        'alt' => $SITE->fullname,
+        'class' => 'img-fluid',
+    ]);
+
+    echo html_writer::end_tag('div');
+}
+
+echo $OUTPUT->heading(get_string('loginto', 'core', $SITE->fullname));
+
+// QR-Code.
+echo html_writer::start_tag('div', ['class' => 'qrcode-container text-center mt-5 mb-3']);
+
+$url = 'todo';
+echo(qrcode_generator::generate_qrcode($url));
+
+echo html_writer::end_tag('div');
+
+// Instructions.
+echo html_writer::tag('div', get_string('qrcode_instructions', 'auth_qrcode'), ['class' => 'text-center mb-3']);
+
+// Back to login.
+echo html_writer::tag('a', 'Return to Login', [
+    'href' => new moodle_url('/')->out(),
+    'class' => 'btn btn-secondary w-100',
+]);
+
+echo $OUTPUT->footer();
