@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Plugin version and other meta-data are defined here.
+ * Define services for plugin.
  *
  * @package     auth_qrcode
  * @copyright   2025 Your Name <you@example.com>
@@ -24,8 +24,11 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'auth_qrcode';
-$plugin->release = '0.1.0';
-$plugin->version = 2026063001;
-$plugin->requires = 2025100601;
-$plugin->maturity = MATURITY_ALPHA;
+$functions = [
+    'auth_qrcode_check_login' => [
+        'classname' => 'auth_qrcode\external\check_login',
+        'description' => 'Check if this session has been authorized from another device and log in the user',
+        'type' => 'write',
+        'ajax' => true,
+    ],
+];
