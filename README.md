@@ -20,6 +20,14 @@ Just **Scan → Confirm → Login.** 🎉
 
 ---
 
+### 🔐 How it works
+
+When the login page is opened, Moodle creates a temporary QR login request containing a random token and the a secret The QR code only contains the token.
+
+After scanning the QR code with a device that's already signed in, the user confirms the login. Moodle then verifies that the request belongs to the same browser that generated the QR code before completing the login. Once used (or expired), the QR login request is removed and cannot be used again.
+
+---
+
 ## Installing via uploaded ZIP file ##
 
 1. Log in to your Moodle site as an admin and go to _Site administration >
