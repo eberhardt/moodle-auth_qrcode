@@ -39,3 +39,4 @@ $string['invalid_token'] = 'Invalid token';
 $string['instruction_1'] = 'Open a camera app on your smartphone, which is able to scan QR codes.';
 $string['instruction_2'] = 'Scan the code.';
 $string['instruction_3'] = 'Follow the instructions on your smartphone and confirm the login.';
+$string['login_rejected'] = 'Your login was rejected';

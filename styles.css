@@ -6,7 +6,7 @@
     font-size: larger;
 }
 
-.qrcode-image {
+#qrcode-image {
     margin-left: 10%;
     width: 80%;
 }

@@ -19,20 +19,15 @@
 }}
 <div id="auth_qrcode">
     <h3>Login with QR-Code</h3>
-    <div class="qrcode-container mt-5 mb-5">
-    {{#qrcode_data}}
-        <img id="auth_qrcode-image" src="{{qrcode_data}}" class="qrcode-image" />
-    {{/qrcode_data}}
-    {{^qrcode_data}}
-        <a href="javascript:auth_qrcode_create_qrcode()" class="qrcode-create-link">QR-Code erstellen</a>
-    {{/qrcode_data}}
-    </div>
-    <div class="qrcode-instructions mb-3 text-left">
-        <ol>
-            <li>{{#str}}instruction_1, auth_qrcode{{/str}}</li>
-            <li>{{#str}}instruction_2, auth_qrcode{{/str}}</li>
-            <li>{{#str}}instruction_3, auth_qrcode{{/str}}</li>
-        </ol>
+    <div id="qrcode-container" class="mt-5 mb-5">
+        <img id="qrcode-image" src="{{qrcode_data}}" />
+        <div class="qrcode-instructions mt-5 text-left">
+            <ol>
+                <li>{{#str}}instruction_1, auth_qrcode{{/str}}</li>
+                <li>{{#str}}instruction_2, auth_qrcode{{/str}}</li>
+                <li>{{#str}}instruction_3, auth_qrcode{{/str}}</li>
+            </ol>
+        </div>
     </div>
     <div id="expired-container" class="text-center mb-3 hidden">
         <p>{{#str}}qrcode_expired, auth_qrcode{{/str}}</p>
