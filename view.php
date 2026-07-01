@@ -15,10 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * auth_qrcode view.php description here.
+ * Display the confirmation page after a user has scanned a QR-Code.
  *
  * @package    auth_qrcode
- * @copyright  2026  <>
+ * @copyright  2026 MoodleMootDACH
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -26,15 +26,53 @@ require_once(__DIR__ . '/../../config.php');
 
 require_login();
 
-// Validate the sesskey (CSRF protection).
-// require_sesskey(); // Prevents unauthorized requests.
+$context = context_system::instance();
+$PAGE->set_context($context);
 
-$token = required_param('token', PARAM_ALPHANUM);
+$PAGE->set_url('/auth/qrcode/view.php');
+$PAGE->set_pagelayout('standard');
+$PAGE->set_title(get_string('login_via_qrcode', 'auth_qrcode'));
+$PAGE->set_heading(get_string('login_via_qrcode', 'auth_qrcode'));
 
-try {
-    //todo show message if i am sure to log in that session.
-    echo('your token is:');
-    echo($token);
-} catch (dml_missing_record_exception $e) {
-    throw new moodle_exception('ivalid', 'error', '', 'Invalid course'); // Throw error, invalid custom token
+echo $OUTPUT->header();
+
+// Check if the token is valid.
+$token = optional_param('token', null, PARAM_ALPHANUMEXT);
+if (!\auth_qrcode\token_validator::validate($token)) {
+    echo $OUTPUT->notification(get_string('invalid_token', 'auth_qrcode'), 'danger', false);
+    echo $OUTPUT->footer();
+    exit;
 }
+
+// Check if the token should be cancelled.
+if (optional_param('cancel', false, PARAM_BOOL)) {
+    \auth_qrcode\token_validator::cancel($token);
+    echo $OUTPUT->notification(get_string('token_cancelled', 'auth_qrcode'), 'info', false);
+    echo $OUTPUT->footer();
+    exit;
+}
+
+// Check if the token should be confirmed.
+if (optional_param('confirm', false, PARAM_BOOL)) {
+    \auth_qrcode\token_validator::confirm($token);
+    echo $OUTPUT->notification(get_string('token_confirmed', 'auth_qrcode'), 'success', false);
+    echo $OUTPUT->footer();
+    exit;
+}
+
+// Confirmation message.
+echo html_writer::tag('div', get_string('confirmation', 'auth_qrcode'), ['class' => 'confirmation-message mt-3 mb-3']);
+
+// Confirmation buttons.
+echo html_writer::start_tag('div', ['class' => 'confirmation-buttons']);
+echo html_writer::tag('a', get_string('yes', 'core'), [
+    'href' => new moodle_url('/auth/qrcode/view.php', ['token' => $token, 'confirm' => 1]),
+    'class' => 'btn btn-primary w-50 mb-3 me-3',
+]);
+echo html_writer::tag('a', get_string('no', 'core'), [
+    'href' => new moodle_url('/auth/qrcode/view.php', ['token' => $token, 'cancel' => 1]),
+    'class' => 'btn btn-secondary w-50 mb-3 me-3',
+]);
+echo html_writer::end_tag('div');
+
+echo $OUTPUT->footer();

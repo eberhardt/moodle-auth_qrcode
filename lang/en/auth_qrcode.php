@@ -26,5 +26,10 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['pluginname'] = 'QR-Code';
-$string['privacy:metadata'] = 'Your metadata here'; //ToDo: Change me
+$string['login_via_qrcode'] = 'Log in via QR-Code';
+$string['privacy:metadata'] = 'Your metadata here'; // ToDo: Change me.
 $string['qrcode_instructions'] = 'Scan the QR-Code with your mobile device.';
+$string['confirmation'] = 'Do you try to log in to Moodle via QR-Code?';
+$string['token_confirmed'] = 'Login successful. Please switch to the other device.';
+$string['token_cancelled'] = 'Login cancelled.';
+$string['invalid_token'] = 'Invalid token';
