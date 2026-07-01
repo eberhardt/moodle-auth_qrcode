@@ -16,6 +16,10 @@
 
 namespace auth_qrcode\external;
 
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->dirroot . '/login/lib.php');
+
 use auth_qrcode\db\model\qrcode;
 use core_external\external_api;
 use core_external\external_function_parameters;
@@ -53,10 +57,9 @@ class check_login extends external_api {
             if (is_object($canlogin)) {
                 // The other session authorized this token to login as the user that was returned.
                 complete_user_login($canlogin, ['auth_qrcode_login' => true]);
-                $wantsurl = new \moodle_url((!empty($SESSION->wantsurl) ? $SESSION->wantsurl : '/'));
                 return [
                     'status' => 'authorized',
-                    'wantsurl' => $wantsurl->out(false),
+                    'wantsurl' => \core_login_get_return_url(),
                 ];
             }
             if ($canlogin === 'waiting') {
