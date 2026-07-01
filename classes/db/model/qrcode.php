@@ -204,11 +204,13 @@ class qrcode extends persistent {
      * @return \stdClass|null
      */
     public function get_user_record(): ?\stdClass {
+        global $DB;
+
         $userid = $this->get('userid');
         if (!$userid) {
             return null;
         }
-        return user::get_user_by_id($userid);
+        return $DB->get_record('user', ['id' => $userid]);
     }
 
     /**

@@ -16,6 +16,7 @@
 
 namespace auth_qrcode\external;
 
+use auth_qrcode\db\model\qrcode;
 use core_external\external_api;
 use core_external\external_function_parameters;
 use core_external\external_single_structure;
@@ -41,11 +42,37 @@ class check_login extends external_api {
     /**
      * Check if this session has been authorized from another device and log in the user.
      *
-     * @return array{status: 'not_authorized'|'authorized'|'no_token_existing'}
+     * @return array{status: 'waiting_auth'|'authorized'|'not_authorized'|'token_not_found'}
      */
     public static function execute(): array {
+        global $SESSION;
+
+        if (isset($SESSION->auth_qrcode_token)) {
+            $canlogin = qrcode::can_user_login($SESSION->auth_qrcode_token, $SESSION->id);
+
+            if (is_object($canlogin)) {
+                // The other session authorized this token to login as the user that was returned.
+                complete_user_login($canlogin, ['auth_qrcode_login' => true]);
+                $wantsurl = new \moodle_url((!empty($SESSION->wantsurl) ? $SESSION->wantsurl : '/'));
+                return [
+                    'status' => 'authorized',
+                    'wantsurl' => $wantsurl->out(false),
+                ];
+            }
+            if ($canlogin === 'waiting') {
+                return [
+                    'status' => 'waiting_auth',
+                ];
+            }
+            if ($canlogin === 'denied') {
+                return [
+                    'status' => 'not_authorized',
+                ];
+            }
+        }
+
         return [
-            'status' => 'not_authorized',
+            'status' => 'token_not_found',
         ];
     }
 
@@ -57,6 +84,7 @@ class check_login extends external_api {
     public static function execute_returns(): external_single_structure {
         return new external_single_structure([
             'status' => new external_value(PARAM_TEXT, 'Status of the login check.'),
+            'wantsurl' => new external_value(PARAM_LOCALURL, 'URL to redirect to', VALUE_OPTIONAL, null, NULL_ALLOWED),
         ]);
     }
 }
