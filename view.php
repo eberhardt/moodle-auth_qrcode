@@ -36,14 +36,7 @@ $PAGE->set_heading(get_string('login_via_qrcode', 'auth_qrcode'));
 
 echo $OUTPUT->header();
 
-// Check if the token is valid.
-$token = optional_param('token', null, PARAM_ALPHANUMEXT);
-$tokeninfo = \auth_qrcode\db\model\qrcode::get_loginattemp_info($token);
-if (!$tokeninfo) {
-    echo $OUTPUT->notification(get_string('invalid_token', 'auth_qrcode'), 'danger', false);
-    echo $OUTPUT->footer();
-    exit;
-}
+$token = required_param('token', PARAM_ALPHANUMEXT);
 
 // Check if the token should be denied.
 if (optional_param('deny', false, PARAM_BOOL)) {
@@ -57,6 +50,14 @@ if (optional_param('deny', false, PARAM_BOOL)) {
 if (optional_param('allow', false, PARAM_BOOL)) {
     \auth_qrcode\db\model\qrcode::allow($USER->id, $token);
     echo $OUTPUT->notification(get_string('token_allowed', 'auth_qrcode'), 'success', false);
+    echo $OUTPUT->footer();
+    exit;
+}
+
+// Check if the token is valid.
+$tokeninfo = \auth_qrcode\db\model\qrcode::get_loginattemp_info($token);
+if (!$tokeninfo) {
+    echo $OUTPUT->notification(get_string('invalid_token', 'auth_qrcode'), 'danger', false);
     echo $OUTPUT->footer();
     exit;
 }
