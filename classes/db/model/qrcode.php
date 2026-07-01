@@ -26,9 +26,10 @@ use core\user;
  * This class handles the storage and retrieval of QR code tokens and their
  * associated session and user information.
  *
- * @package    auth_qrcode
- * @copyright  2026 Stefan Dani, Fernfachhochschule Schweiz (FFHS) <stefan.dani@ffhs.ch>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   auth_qrcode
+ * @author    Stefan Dani (stefan.dani@ffhs.ch)
+ * @copyright 2026 MoodleMootDACH
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qrcode extends persistent {
 

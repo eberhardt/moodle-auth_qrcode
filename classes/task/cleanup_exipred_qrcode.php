@@ -19,10 +19,12 @@ namespace auth_qrcode\task;
 use auth_qrcode\db\model\qrcode;
 
 /**
+ * Scheduled task to cleanup expired QR login records.
  *
- * @package    auth_qrcode
- * @copyright  2026 Stefan Dani, Fernfachhochschule Schweiz (FFHS) <stefan.dani@ffhs.ch>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   auth_qrcode
+ * @author    Stefan Dani (stefan.dani@ffhs.ch)
+ * @copyright 2026 MoodleMootDACH
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class cleanup_exipred_qrcode extends \core\task\scheduled_task {
 
