@@ -38,39 +38,45 @@ echo $OUTPUT->header();
 
 // Check if the token is valid.
 $token = optional_param('token', null, PARAM_ALPHANUMEXT);
-if (!\auth_qrcode\token_validator::validate($token)) {
+$tokeninfo = \auth_qrcode\db\model\qrcode::get_loginattemp_info($token);
+if (!$tokeninfo) {
     echo $OUTPUT->notification(get_string('invalid_token', 'auth_qrcode'), 'danger', false);
     echo $OUTPUT->footer();
     exit;
 }
 
-// Check if the token should be cancelled.
-if (optional_param('cancel', false, PARAM_BOOL)) {
-    \auth_qrcode\token_validator::cancel($token);
-    echo $OUTPUT->notification(get_string('token_cancelled', 'auth_qrcode'), 'info', false);
+// Check if the token should be denied.
+if (optional_param('deny', false, PARAM_BOOL)) {
+    \auth_qrcode\db\model\qrcode::deny($token);
+    echo $OUTPUT->notification(get_string('token_denied', 'auth_qrcode'), 'info', false);
     echo $OUTPUT->footer();
     exit;
 }
 
-// Check if the token should be confirmed.
-if (optional_param('confirm', false, PARAM_BOOL)) {
-    \auth_qrcode\token_validator::confirm($token);
-    echo $OUTPUT->notification(get_string('token_confirmed', 'auth_qrcode'), 'success', false);
+// Check if the token should be allowed.
+if (optional_param('allow', false, PARAM_BOOL)) {
+    \auth_qrcode\db\model\qrcode::allow($USER->id, $token);
+    echo $OUTPUT->notification(get_string('token_allowed', 'auth_qrcode'), 'success', false);
     echo $OUTPUT->footer();
     exit;
 }
 
 // Confirmation message.
 echo html_writer::tag('div', get_string('confirmation', 'auth_qrcode'), ['class' => 'confirmation-message mt-3 mb-3']);
+echo html_writer::start_tag('ul', ['class' => 'token-info']);
+echo html_writer::tag('li', get_string('ip', 'auth_qrcode') . ':' . $tokeninfo['ip']);
+echo html_writer::tag('li', get_string('os', 'auth_qrcode') . ':' . $tokeninfo['os']);
+echo html_writer::tag('li', get_string('browser', 'auth_qrcode') . ':' . $tokeninfo['browser']);
+echo html_writer::end_tag('ul');
 
 // Confirmation buttons.
 echo html_writer::start_tag('div', ['class' => 'confirmation-buttons']);
 echo html_writer::tag('a', get_string('yes', 'core'), [
-    'href' => new moodle_url('/auth/qrcode/view.php', ['token' => $token, 'confirm' => 1]),
+    'href' => new moodle_url('/auth/qrcode/view.php', ['token' => $token, 'allow' => 1]),
     'class' => 'btn btn-primary w-50 mb-3 me-3',
 ]);
 echo html_writer::tag('a', get_string('no', 'core'), [
-    'href' => new moodle_url('/auth/qrcode/view.php', ['token' => $token, 'cancel' => 1]),
+    'href' => new moodle_url('/auth/qrcode/view.php', ['token' => $token, 'deny' => 1]),
     'class' => 'btn btn-secondary w-50 mb-3 me-3',
 ]);
 echo html_writer::end_tag('div');
