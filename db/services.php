@@ -29,6 +29,7 @@ $functions = [
         'classname' => 'auth_qrcode\external\check_login',
         'description' => 'Check if this session has been authorized from another device and log in the user',
         'type' => 'write',
+        'loginrequired' => false,
         'ajax' => true,
     ],
 ];

@@ -70,4 +70,6 @@ echo html_writer::tag('a', 'Return to Login', [
     'class' => 'btn btn-secondary w-100',
 ]);
 
+$PAGE->requires->js_call_amd('auth_qrcode/check', 'init');
+
 echo $OUTPUT->footer();

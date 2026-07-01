@@ -44,9 +44,6 @@ class check_login extends external_api {
      * @return array{status: 'not_authorized'|'authorized'|'no_token_existing'}
      */
     public static function execute(): array {
-        $context = \context_system::instance();
-        self::validate_context($context);
-
         return [
             'status' => 'not_authorized',
         ];
