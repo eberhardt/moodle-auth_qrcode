@@ -19,8 +19,8 @@
 }}
 <div id="auth_qrcode">
     <h3>Login with QR-Code</h3>
-    <div id="qrcode-container" class="mt-5 mb-5">
-        <img id="qrcode-image" src="{{qrcode_data}}" />
+    <div id="qrcode-container" class="text-center mt-5 mb-5">
+        <img width="80%" src="{{qrcode_data}}" />
         <div class="qrcode-instructions mt-5 text-left">
             <ol>
                 <li>{{#str}}instruction_1, auth_qrcode{{/str}}</li>
@@ -29,14 +29,18 @@
             </ol>
         </div>
     </div>
-    <div id="expired-container" class="text-center mb-3 hidden">
-        <p>{{#str}}qrcode_expired, auth_qrcode{{/str}}</p>
+    <div id="expired-container" class="text-center mt-5 mb-3 hidden">
+        <img width="80%" src="{{qrcode_data}}" class="qrcode-blured" />
+        <div class="qrcode-alert mt-5 mb-5">{{#str}}qrcode_expired, auth_qrcode{{/str}}</div>
         <a href="/auth/qrcode/login.php" class="btn btn-primary w-75">{{#str}}get_new_qrcode, auth_qrcode{{/str}}</a>
     </div>
-    <div id="rejected-container" class="text-center mb-5 hidden">
-        <p>{{#str}}login_rejected, auth_qrcode{{/str}}</p>
+    <div id="rejected-container" class="text-center mt-5 mb-3 hidden">
+        <img width="80%" src="{{qrcode_data}}" class="qrcode-blured" />
+        <div class="qrcode-alert mt-5 mb-5">{{#str}}login_rejected, auth_qrcode{{/str}}</div>
+        <a href="/auth/qrcode/login.php" class="btn btn-primary w-75">{{#str}}get_new_qrcode, auth_qrcode{{/str}}</a>
     </div>
     <div class="text-center">
         <a href="/login/" class="btn btn-secondary w-75">Back to Login</a>
     </div>
+    <!-- TODO: remove redundant img by moving the rejected/expired-container into qrcode-container -->
 </div>

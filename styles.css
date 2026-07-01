@@ -6,7 +6,12 @@
     font-size: larger;
 }
 
-#qrcode-image {
-    margin-left: 10%;
-    width: 80%;
+.qrcode-alert {
+    font-size: larger;
+    font-weight: bolder;
+    color: red;
+}
+
+.qrcode-blured {
+    filter: blur(10px);
 }
