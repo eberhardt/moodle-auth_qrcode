@@ -36,6 +36,9 @@ async function checkNow() {
         window.location.href = check.wantsurl;
     } else if (check.status === 'not_authorized') {
         displayRejection();
+    } else if (check.status === 'token_not_found') {
+        clearTimeout(expirationTimer);
+        expireQRCode(0);
     }
 }
 
