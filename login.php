@@ -26,7 +26,7 @@ use auth_qrcode\qrcode_generator;
 
 require_once(__DIR__ . '/../../config.php');
 
-if (isloggedin() and !isguestuser()) {
+if (isloggedin() && !isguestuser()) {
     // Already logged in. Let login page handle it.
     redirect(new moodle_url('/login/index.php'));
 }
@@ -60,21 +60,38 @@ if ($logo) {
 
 echo $OUTPUT->heading(get_string('loginto', 'core', $SITE->fullname));
 
-// QR-Code.
-echo html_writer::start_tag('div', ['class' => 'qrcode-container text-center mt-5 mb-3']);
+echo html_writer::start_tag('div', ['id' => 'qrcode-container', 'class' => 'text-center mt-5 mb-3']);
 
-$url = 'todo';
+// QR-Code.
+// TODO: Generate QR-Code dynamically.
+$url = new moodle_url('/auth/qrcode/view.php', ['token' => '1234']);
+echo html_writer::start_tag('div', ['class' => 'qrcode-image text-center mt-5 mb-3']);
 echo(qrcode_generator::generate_qrcode($url));
+echo html_writer::end_tag('div');
+
+// Scan instructions.
+echo html_writer::tag('p', get_string('qrcode_instructions', 'auth_qrcode'));
 
 echo html_writer::end_tag('div');
 
-// Instructions.
-echo html_writer::tag('div', get_string('qrcode_instructions', 'auth_qrcode'), ['class' => 'text-center mb-3']);
+// QR-Code expired.
+echo html_writer::start_tag('div', ['id' => 'expired-container', 'class' => 'text-center mb-3 hidden']);
+echo html_writer::tag('p', get_string('qrcode_expired', 'auth_qrcode'));
+echo html_writer::tag('a', get_string('get_new_qrcode', 'auth_qrcode'), [
+    'href' => new moodle_url('/auth/qrcode/login.php'),
+    'class' => 'btn btn-primary w-75',
+]);
+echo html_writer::end_tag('div');
+
+// Login rejected.
+echo html_writer::start_tag('div', ['id' => 'rejected-container', 'class' => 'text-center mb-3 hidden']);
+echo html_writer::tag('p', get_string('login_rejected', 'auth_qrcode'));
+echo html_writer::end_tag('div');
 
 // Back to login.
 echo html_writer::start_tag('div', ['class' => 'text-center']);
-echo html_writer::tag('a', 'Return to Login', [
-    'href' => (new moodle_url('/login/index.php'))->out(),
+echo html_writer::tag('a', get_string('return_to_login', 'auth_qrcode'), [
+    'href' => new moodle_url('/login/index.php'),
     'class' => 'btn btn-secondary w-75',
 ]);
 echo html_writer::end_tag('div');
