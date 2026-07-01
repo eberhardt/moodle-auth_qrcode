@@ -36,3 +36,6 @@ $string['confirmation'] = 'Do you try to log in to Moodle via QR-Code?';
 $string['token_confirmed'] = 'Login successful. Please switch to the other device.';
 $string['token_cancelled'] = 'Login cancelled.';
 $string['invalid_token'] = 'Invalid token';
+$string['instruction_1'] = 'Open a camera app on your smartphone, which is able to scan QR codes.';
+$string['instruction_2'] = 'Scan the code.';
+$string['instruction_3'] = 'Follow the instructions on your smartphone and confirm the login.';

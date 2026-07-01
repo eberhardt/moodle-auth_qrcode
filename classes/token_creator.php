@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * qrcode generator.
+ * Token validator.
  *
  * @package   auth_qrcode
  * @author    Sascha Vogel (sascha.vogel@ffhs.ch)
@@ -25,25 +25,17 @@
 
 namespace auth_qrcode;
 
-use moodle_url;
-
-defined('MOODLE_INTERNAL') || die();
-
-require_once($CFG->libdir . '/tcpdf/tcpdf_barcodes_2d.php');
-
 /**
- * qrcode generator class.
+ * Token validator class.
  */
-class qrcode_generator {
+class token_creator {
     /**
-     * generate qrcode.
+     * Removes/cancels the token.
      *
-     * @param moodle_url $uri
-     * @return string
+     * @param string $salt
+     * @return void
      */
-    public static function generate_qrcode_data(moodle_url $uri) {
-        $qrcode = new  \TCPDF2DBarcode($uri->out(), 'QRCODE');
-        $image_data = base64_encode($qrcode->getBarcodeSVGcode(20, 20));
-        return 'data:image/svg+xml;base64,' . $image_data;
+    public static function create($salt = "") {
+        return "verysecure$salt";
     }
 }

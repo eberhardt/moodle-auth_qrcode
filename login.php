@@ -23,6 +23,7 @@
  */
 
 use auth_qrcode\qrcode_generator;
+use auth_qrcode\token_creator;
 
 require_once(__DIR__ . '/../../config.php');
 
@@ -41,62 +42,20 @@ $PAGE->set_title(get_string('pluginname', 'auth_qrcode'));
 $PAGE->set_heading(get_string('pluginname', 'auth_qrcode'));
 
 echo $OUTPUT->header();
-
-echo html_writer::start_tag('div', ['class' => 'text-center']);
-
 $logo = $OUTPUT->get_logo_url();
 if ($logo) {
-    echo html_writer::start_tag('div', ['id' => 'loginlogo', 'class' => 'd-flex justify-content-center mb-4']);
-
-    echo html_writer::empty_tag('img', [
-        'id' => 'logoimage',
-        'src' => $logo,
-        'alt' => $SITE->fullname,
-        'class' => 'img-fluid',
-    ]);
-
-    echo html_writer::end_tag('div');
+    echo $OUTPUT->render_from_template("auth_qrcode/logo", ["logo_url" => $logo, "site_fullname" => $SITE->fullname]);
 }
 
-echo $OUTPUT->heading(get_string('loginto', 'core', $SITE->fullname));
-
-echo html_writer::start_tag('div', ['id' => 'qrcode-container', 'class' => 'text-center mt-5 mb-3']);
-
 // QR-Code.
-// TODO: Generate QR-Code dynamically.
-$url = new moodle_url('/auth/qrcode/view.php', ['token' => '1234']);
-echo html_writer::start_tag('div', ['class' => 'qrcode-image text-center mt-5 mb-3']);
-echo(qrcode_generator::generate_qrcode($url));
-echo html_writer::end_tag('div');
-
-// Scan instructions.
-echo html_writer::tag('p', get_string('qrcode_instructions', 'auth_qrcode'));
-
-echo html_writer::end_tag('div');
-
-// QR-Code expired.
-echo html_writer::start_tag('div', ['id' => 'expired-container', 'class' => 'text-center mb-3 hidden']);
-echo html_writer::tag('p', get_string('qrcode_expired', 'auth_qrcode'));
-echo html_writer::tag('a', get_string('get_new_qrcode', 'auth_qrcode'), [
-    'href' => new moodle_url('/auth/qrcode/login.php'),
-    'class' => 'btn btn-primary w-75',
-]);
-echo html_writer::end_tag('div');
-
-// Login rejected.
-echo html_writer::start_tag('div', ['id' => 'rejected-container', 'class' => 'text-center mb-3 hidden']);
-echo html_writer::tag('p', get_string('login_rejected', 'auth_qrcode'));
-echo html_writer::end_tag('div');
-
-// Back to login.
-echo html_writer::start_tag('div', ['class' => 'text-center']);
-echo html_writer::tag('a', get_string('return_to_login', 'auth_qrcode'), [
-    'href' => new moodle_url('/login/index.php'),
-    'class' => 'btn btn-secondary w-75',
-]);
-echo html_writer::end_tag('div');
-
-echo html_writer::end_tag('div');
+$url = moodle_url::routed_path("auth/qrcode/view.php", ["token" => token_creator::create()]);
+$template_data = [
+    "qrcode_data" => qrcode_generator::generate_qrcode_data($url),
+    "qrcode_instructions1" => get_string('instruction_1', 'auth_qrcode'),
+    "qrcode_instructions2" => get_string('instruction_2', 'auth_qrcode'),
+    "qrcode_instructions3" => get_string('instruction_3', 'auth_qrcode')
+];
+echo $OUTPUT->render_from_template("auth_qrcode/login", $template_data);
 
 $PAGE->requires->js_call_amd('auth_qrcode/check', 'init');
 

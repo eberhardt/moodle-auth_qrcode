@@ -1,0 +1,12 @@
+#auth_qrcode-logo {
+    max-width: 50%;
+}
+
+.qrcode-instructions {
+    font-size: larger;
+}
+
+.qrcode-image {
+    margin-left: 10%;
+    width: 80%;
+}
