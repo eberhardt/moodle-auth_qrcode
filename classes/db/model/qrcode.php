@@ -41,7 +41,7 @@ class qrcode extends persistent {
      * Creates a new QR code login record.
      *
      * @param string $token The unique token.
-     * @param int $initialsessionid The ID of the session that requested the QR code.
+     * @param string $sid The session ID string that requested the QR code.
      * @param string|null $useragent The user agent string to parse for OS and browser. Defaults to current UA.
      * @param int|null $expires Expiry timestamp.
      * @return self|null The created persistent object, or null if token already exists.
@@ -50,24 +50,33 @@ class qrcode extends persistent {
      */
     public static function create_record(
         string $token,
-        int $initialsessionid,
-        ?string $useragent,
+        string $sid,
+        ?string $useragent = null,
         ?int $expires = null
-    ): ?self {
+    ): self|false {
+        global $DB;
+
         $existing = self::get_record([
             'token' => $token,
         ]);
 
         if ($existing) {
             mtrace("Existing token found.");
-            return null;
+            return false;
         }
 
-        $env = self::detect_environment($useragent);
+        $session = $DB->get_record('sessions', ['sid' => $sid], 'id');
+        if (!$session) {
+            mtrace("Session not found for sid");
+            return false;
+        }
+
+        $ua = $useragent ?? \core_useragent::get_user_agent_string() ?: '';
+        $env = self::detect_environment($ua);
 
         $record = new self();
         $record->set('token', $token);
-        $record->set('initial_sessionid', $initialsessionid);
+        $record->set('initial_sessionid', $session->id);
         $record->set('requester_os', $env['os']);
         $record->set('requester_browser', $env['browser']);
         $record->set('status', 'created');
@@ -86,19 +95,65 @@ class qrcode extends persistent {
      * @param string $token
      * @return self|null
      */
-    public static function set_userid(int $userid, string $token): ?self {
+    public static function allow(int $userid, string $token): false|self {
         $existing = self::get_record([
             'token' => $token,
             'status' => 'in_use'
         ]);
         if ($existing) {
+            if ($existing->get('timeexpires') < time()) {
+                mtrace("Token expired.");
+                $existing->delete();
+                return false;
+            }
             $existing->set('userid', $userid);
             $existing->set('status', 'allow_login');
+            $existing->set('timeexpires', time() + 60); // Extend timer.
             $existing->update();
             mtrace("User ID added to token.");
             return $existing;
         }
-        return null;
+        return false;
+    }
+
+    public static function deny(string $token): void {
+        $existing = self::get_record([
+            'token' => $token,
+            'status' => 'in_use'
+        ]);
+        if ($existing) {
+            mtrace("Token denied.");
+            $existing->delete();
+        }
+    }
+
+    public static function get_loginattemp_info(string $token): array|false {
+        global $DB;
+
+        $existing = self::get_record([
+            'token' => $token,
+            'status' => 'created'
+        ]);
+        if ($existing) {
+            if ($existing->get('timeexpires') < time()) {
+                mtrace("Token expired.");
+                $existing->delete();
+                return false;
+            }
+
+            $existing->set('status', 'in_use');
+            $existing->set('timeexpires', time() + 60); // Extend timer 1min.
+            $existing->update();
+
+            $session = $DB->get_record('sessions', ['id' => $existing->get('initial_sessionid')], 'lastip');
+
+            return [
+                'ip' => $session ? $session->lastip : 'Unknown',
+                'os' => $existing->get('requester_os'),
+                'browser' => $existing->get('requester_browser'),
+            ];
+        }
+        return false;
     }
 
     /**
