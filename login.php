@@ -24,6 +24,7 @@
 
 use auth_qrcode\qrcode_generator;
 use auth_qrcode\token_creator;
+use moodle_url;
 
 require_once(__DIR__ . '/../../config.php');
 
@@ -48,7 +49,7 @@ if ($logo) {
 }
 
 // QR-Code.
-$url = moodle_url::routed_path("auth/qrcode/view.php", ["token" => token_creator::create()]);
+$url = new moodle_url('/auth/qrcode/view.php', ["token" => token_creator::create()]);
 $template_data = [
     "qrcode_data" => qrcode_generator::generate_qrcode_data($url)
 ];
