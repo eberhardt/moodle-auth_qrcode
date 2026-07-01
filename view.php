@@ -45,7 +45,7 @@ $token = required_param('token', PARAM_ALPHANUMEXT);
 // Check if the token should be denied.
 if (optional_param('deny', false, PARAM_BOOL)) {
     \auth_qrcode\db\model\qrcode::deny($token);
-    echo $OUTPUT->notification(get_string('token_denied', 'auth_qrcode'), 'info', false);
+    echo $OUTPUT->notification(get_string('login_cancelled', 'auth_qrcode'), 'info', false);
     echo $OUTPUT->footer();
     exit;
 }
@@ -53,7 +53,7 @@ if (optional_param('deny', false, PARAM_BOOL)) {
 // Check if the token should be allowed.
 if (optional_param('allow', false, PARAM_BOOL)) {
     \auth_qrcode\db\model\qrcode::allow($USER->id, $token);
-    echo $OUTPUT->notification(get_string('token_allowed', 'auth_qrcode'), 'success', false);
+    echo $OUTPUT->notification(get_string('login_confirmed', 'auth_qrcode'), 'success', false);
     echo $OUTPUT->footer();
     exit;
 }
