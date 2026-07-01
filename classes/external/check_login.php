@@ -48,7 +48,7 @@ class check_login extends external_api {
         global $SESSION;
 
         if (isset($SESSION->auth_qrcode_token)) {
-            $canlogin = qrcode::can_user_login($SESSION->auth_qrcode_token, $SESSION->id);
+            $canlogin = qrcode::can_user_login($SESSION->auth_qrcode_token, session_id());
 
             if (is_object($canlogin)) {
                 // The other session authorized this token to login as the user that was returned.

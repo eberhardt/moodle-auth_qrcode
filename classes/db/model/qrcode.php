@@ -313,7 +313,7 @@ class qrcode extends persistent {
             'token' => ['type' => PARAM_ALPHANUMEXT],
             'initial_sessionid' => ['type' => PARAM_INT],
             'status' => ['type' => PARAM_ALPHA],
-            'userid' => ['type' => PARAM_INT, 'null' => NULL_ALLOWED],
+            'userid' => ['type' => PARAM_INT, 'null' => NULL_ALLOWED, 'default' => null],
             'timecreated' => ['type' => PARAM_INT],
             'timeexpires' => ['type' => PARAM_INT],
             'requester_os' => ['type' => PARAM_TEXT],

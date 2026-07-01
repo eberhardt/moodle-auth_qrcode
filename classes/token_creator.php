@@ -30,12 +30,20 @@ namespace auth_qrcode;
  */
 class token_creator {
     /**
-     * Removes/cancels the token.
+     * Creates a new token.
      *
-     * @param string $salt
-     * @return void
+     * This always creates a new token even if the user already has one.
+     *
+     * @return string new token
      */
-    public static function create($salt = "") {
-        return "verysecure$salt";
+    public static function create() {
+        global $SESSION;
+
+        $token = random_string(32);
+        if (db\model\qrcode::create_record($token, session_id())) {
+            $SESSION->auth_qrcode_token = $token;
+            return $token;
+        }
+        throw new \coding_exception('Could not create token');
     }
 }
