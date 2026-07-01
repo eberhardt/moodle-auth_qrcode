@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * qrcode generator.
+ * Token validator.
  *
  * @package   auth_qrcode
  * @author    Sascha Vogel (sascha.vogel@ffhs.ch)
@@ -25,24 +25,43 @@
 
 namespace auth_qrcode;
 
-defined('MOODLE_INTERNAL') || die();
-
-require_once($CFG->libdir . '/tcpdf/tcpdf_barcodes_2d.php');
-
 /**
- * qrcode generator class.
+ * Token validator class.
  */
-class qrcode_generator {
+class token_validator {
     /**
-     * generate qrcode.
+     * Validates the token.
      *
-     * @param string $uri
-     * @return string
+     * @param string|null $token
+     * @return bool
      */
-    public static function generate_qrcode(string $uri = ''): string {
-        $qrcode = new  \TCPDF2DBarcode($uri, 'QRCODE');
-        $image = $qrcode->getBarcodeSVGcode(20, 20);
-        $html = \html_writer::img('data:image/svg+xml;base64,' . base64_encode($image), '', ['width' => '70%']);
-        return $html;
+    public static function validate(?string $token): bool {
+        if (empty($token)) {
+            return false;
+        }
+
+        // Todo: Check if token exists.
+
+        return true;
+    }
+
+    /**
+     * Confirms the token.
+     *
+     * @param string $token
+     * @return void
+     */
+    public static function confirm(string $token) {
+        // ToDo: Confirm token by setting the userid.
+    }
+
+    /**
+     * Removes/cancels the token.
+     *
+     * @param string $token
+     * @return void
+     */
+    public static function cancel(string $token) {
+        // ToDo: Remove token.
     }
 }

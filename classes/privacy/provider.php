@@ -18,8 +18,7 @@
  * Privacy provider.
  *
  * @package   auth_qrcode
- * @author    Dmitrii Metelkin (dmitriim@catalyst-au.net)
- * @copyright 2020 Catalyst IT
+ * @copyright 2026 MoodleMootDACH
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -30,7 +29,7 @@ use core_privacy\local\metadata\null_provider;
 /**
  * Privacy provider.
  *
- * @copyright  2020 Catalyst IT
+ * @copyright 2026 MoodleMootDACH
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class provider implements null_provider {
