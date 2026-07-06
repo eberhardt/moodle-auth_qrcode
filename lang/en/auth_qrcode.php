@@ -46,3 +46,4 @@ $string['instruction_3'] = 'Follow the instructions on your smartphone and confi
 $string['login_rejected'] = 'Your login was rejected';
 $string['task:cleanup_expired_qrcode'] = 'Cleanup expired QR login records';
 $string['pluginisdisabled'] = 'The auth_qrcode plugin is disabled.';
+$string['cannot_use_as_login_method'] = 'The \'{$a}\' login method has been restored because the QR code authentication method cannot be used for standard logins. ';

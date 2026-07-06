@@ -26,6 +26,8 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/authlib.php');
 
+use \core\notification;
+
 // For further information about authentication plugins please read
 // https://docs.moodle.org/dev/Authentication_plugins.
 //
@@ -76,7 +78,7 @@ class auth_plugin_qrcode extends auth_plugin_base {
     }
 
     /**
-     * Returns true if this authentication plugin can edit the users'profile.
+     * Returns true if this authentication plugin can edit the users' profile.
      *
      * @return bool
      */
@@ -157,5 +159,19 @@ class auth_plugin_qrcode extends auth_plugin_base {
                 'name' => get_string('pluginname', 'auth_qrcode'),
             ]
         ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function user_update($olduser, $newuser) : bool
+    {
+        if ($newuser->auth == $this->authtype) {
+            $authinst = get_auth_plugin($olduser->auth);
+            $newuser->auth = $authinst->authtype;
+            $message = get_string('cannot_use_as_login_method', 'auth_qrcode', $authinst->get_title());
+            notification::add($message, notification::ERROR);
+        }
+        return parent::user_update($olduser, $newuser);
     }
 }
