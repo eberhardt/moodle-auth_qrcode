@@ -47,3 +47,4 @@ $string['login_rejected'] = 'Your login was rejected';
 $string['task:cleanup_expired_qrcode'] = 'Cleanup expired QR login records';
 $string['pluginisdisabled'] = 'The auth_qrcode plugin is disabled.';
 $string['cannot_use_as_login_method'] = 'The \'{$a->auth}\' login method for user {$a->name} has been restored because the QR code authentication method cannot be used for standard logins. ';
+$string['expired_or_rejected'] = 'Your token is either expired or rejected, please scan a new QR code';

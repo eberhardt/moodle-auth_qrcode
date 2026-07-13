@@ -16,7 +16,11 @@
 
 namespace auth_qrcode\event;
 
+use coding_exception;
+
 defined("MOODLE_INTERNAL") || die();
+
+use context_system;
 
 /**
  * Registration base event for module context
@@ -25,22 +29,22 @@ defined("MOODLE_INTERNAL") || die();
  * @copyright 2026
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class authenticated extends \core\event\base {
+class login_authorized extends \core\event\base {
 
-	/**
+    /**
 	 *
 	 * @return string
 	 */
-	public static function get_name() {
-		return "User authenticated via QR code";
+	public static function get_name() : string {
+		return "User authorized the login via QR code";
 	}
 
 	/**
 	 * (non-PHPdoc)
 	 * @see \core\event\base::get_description()
 	 */
-	public function get_description() {
-		return "The user with id '$this->userid' logged in via QR code with token '$this->token'.";
+	public function get_description() : string {
+		return "The user with id '$this->userid' authorized the login via QR code with token '{$this->other['token']}'.";
 	}
 
 	/**
@@ -52,25 +56,13 @@ abstract class authenticated extends \core\event\base {
 	}
 
 	/**
-	 * @param string $crud
+	 * (non-PHPdoc)
+     * @see \core\event\base::init()
 	 */
 	protected function init() {
-		$this->data["crud"] = "r";
-		$this->data["edulevel"] = self::LEVEL_PARTICIPATING;
+		$this->data["crud"] = "u";
+		$this->data["edulevel"] = self::LEVEL_OTHER;
 		$this->data["objecttable"] = "auth_qrcode";
-	}
-
-	/**
-	 * Custom validation.
-	 *
-	 * @throws \coding_exception
-	 * @return void
-	 */
-	protected function validate_data() {
-		parent::validate_data();
-
-		if ($this->contextlevel != CONTEXT_SYSTEM) {
-			throw new \coding_exception('Context level must be CONTEXT_SYSTEM.');
-		}
-	}
+        $this->context = context_system::instance();
+    }
 }

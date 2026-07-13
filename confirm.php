@@ -40,7 +40,7 @@ $PAGE->set_heading(get_string('login_via_qrcode', 'auth_qrcode'));
 
 echo $OUTPUT->header();
 
-$token = required_param('token', PARAM_ALPHANUMEXT);
+$token = required_param('token', PARAM_ALPHANUM);
 
 // Check if user is allowed to log in with their primary method.
 if ($USER->auth == 'nologin' || !is_enabled_auth($USER->auth)) {
@@ -60,8 +60,18 @@ if (optional_param('deny', false, PARAM_BOOL)) {
 
 // Check if the token should be allowed.
 if (optional_param('allow', false, PARAM_BOOL)) {
-    \auth_qrcode\db\model\qrcode::allow($USER->id, $token);
-    echo $OUTPUT->notification(get_string('login_confirmed', 'auth_qrcode'), 'success', false);
+    $isallowed = \auth_qrcode\db\model\qrcode::allow($USER->id, $token);
+    if (is_object($isallowed)) {
+        echo $OUTPUT->notification(get_string('login_confirmed', 'auth_qrcode'), 'success', false);
+        $event = \auth_qrcode\event\login_authorized::create([
+            "userid" => $USER->id,
+            "objectid" => $USER->id,
+            "other" => ['token' => $token]
+        ]);
+        $event->trigger();
+    } else {
+        echo $OUTPUT->notification(get_string('expired_or_rejected', 'auth_qrcode'), 'error', false);
+    }
     echo $OUTPUT->footer();
     exit;
 }

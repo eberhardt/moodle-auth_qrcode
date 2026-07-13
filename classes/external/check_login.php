@@ -21,6 +21,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/login/lib.php');
 
 use auth_qrcode\db\model\qrcode;
+use auth_qrcode\event\logged_in;
 use core_external\external_api;
 use core_external\external_function_parameters;
 use core_external\external_single_structure;
@@ -49,14 +50,19 @@ class check_login extends external_api {
      * @return array{status: 'waiting_auth'|'authorized'|'not_authorized'|'token_not_found'}
      */
     public static function execute(): array {
-        global $SESSION;
+        global $SESSION, $USER;
 
         if (isset($SESSION->auth_qrcode_token)) {
             $canlogin = qrcode::can_user_login($SESSION->auth_qrcode_token, session_id());
-
             if (is_object($canlogin)) {
                 // The other session authorized this token to login as the user that was returned.
                 complete_user_login($canlogin, ['auth_qrcode_login' => true]);
+                $event = logged_in::create([
+                    'userid' => $USER->id,
+                    'objectid' => $USER->id,
+                    'other' => ['token' => $SESSION->auth_qrcode_token]
+                ]);
+                $event->trigger();
                 return [
                     'status' => 'authorized',
                     'wantsurl' => \core_login_get_return_url(),
