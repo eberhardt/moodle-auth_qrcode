@@ -149,8 +149,7 @@ class auth_plugin_qrcode extends auth_plugin_base {
     /**
      * @inheritdoc
      */
-    public function user_update($olduser, $newuser) : bool
-    {
+    public function user_update($olduser, $newuser): bool {
         if ($newuser->auth == $this->authtype) {
             $authinst = get_auth_plugin($olduser->auth);
             $newuser->auth = $authinst->authtype;
