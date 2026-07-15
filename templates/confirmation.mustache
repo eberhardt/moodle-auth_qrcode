@@ -26,8 +26,10 @@
         <li>{{#str}}browser, auth_qrcode{{/str}}: {{browser}}</li>
     </ul>
     <!-- Confirmation buttons -->
-    <div class="confirmation-buttons text-center">
-        <a href="{{{yes_url}}}" class="btn btn-primary w-50 mb-3">{{#str}}yes, core{{/str}}</a>
-        <a href="{{{no_url}}}" class="btn btn-secondary w-50">{{#str}}no, core{{/str}}</a>
-    </div>
+    <form class="confirmation-buttons text-center" method="post">
+        <input type="hidden" name="sesskey" value="{{sesskey}}">
+
+        <button type="submit" name="allow" value="1" class="btn btn-primary w-50 mb-3">{{#str}}yes, core{{/str}}</button>
+        <button type="submit" name="deny" value="1" class="btn btn-secondary w-50">{{#str}}no, core{{/str}}</button>
+    </form>
 </div>

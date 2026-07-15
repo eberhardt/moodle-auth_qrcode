@@ -52,6 +52,7 @@ if ($USER->auth == 'nologin' || !is_enabled_auth($USER->auth)) {
 
 // Check if the token should be denied.
 if (optional_param('deny', false, PARAM_BOOL)) {
+    require_sesskey();
     \auth_qrcode\db\model\qrcode::deny($token);
     echo $OUTPUT->notification(get_string('login_cancelled', 'auth_qrcode'), 'info', false);
     echo $OUTPUT->footer();
@@ -60,6 +61,7 @@ if (optional_param('deny', false, PARAM_BOOL)) {
 
 // Check if the token should be allowed.
 if (optional_param('allow', false, PARAM_BOOL)) {
+    require_sesskey();
     $isallowed = \auth_qrcode\db\model\qrcode::allow($USER->id, $token);
     if (is_object($isallowed)) {
         echo $OUTPUT->notification(get_string('login_confirmed', 'auth_qrcode'), 'success', false);
@@ -83,9 +85,8 @@ if (!$tokeninfo) {
     echo $OUTPUT->footer();
     exit;
 }
-// else $tokeninfo is an array
-$tokeninfo["yes_url"] = new moodle_url('/auth/qrcode/confirm.php', ['token' => $token, 'allow' => 1]);
-$tokeninfo["no_url"] = new moodle_url('/auth/qrcode/confirm.php', ['token' => $token, 'deny' => 1]);
+
+$tokeninfo['sesskey'] = sesskey();
 
 echo $OUTPUT->render_from_template('auth_qrcode/confirmation', $tokeninfo);
 echo $OUTPUT->footer();
