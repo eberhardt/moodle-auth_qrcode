@@ -31,7 +31,6 @@ use core\persistent;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qrcode extends persistent {
-
     /**
      * {@inheritDoc}
      */
@@ -94,7 +93,7 @@ class qrcode extends persistent {
     public static function allow(int $userid, string $token, ?int $duration = null): false|self {
         $existing = self::get_record([
             'token' => $token,
-            'status' => 'in_use'
+            'status' => 'in_use',
         ]);
         if ($existing) {
             if (self::is_record_expired($existing)) {
@@ -118,11 +117,11 @@ class qrcode extends persistent {
     public static function deny(string $token): void {
         $existing = self::get_record([
             'token' => $token,
-            'status' => 'in_use'
+            'status' => 'in_use',
         ]);
         if ($existing) {
             $existing->set('status', 'denied');
-            $existing->set('timeexpires', self::calculate_expiry(10)); //set expire to 10 seconds.
+            $existing->set('timeexpires', self::calculate_expiry(10)); // Set expire to 10 seconds.
             $existing->update();
         }
     }
@@ -139,7 +138,7 @@ class qrcode extends persistent {
 
         $existing = self::get_record([
             'token' => $token,
-            'status' => 'created'
+            'status' => 'created',
         ]);
         if ($existing) {
             if (self::is_record_expired($existing)) {

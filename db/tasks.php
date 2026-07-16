@@ -13,7 +13,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-use auth_qrcode\task\cleanup_exipred_qrcode;
 
 /**
  * Install scheduled tasks.
@@ -23,6 +22,8 @@ use auth_qrcode\task\cleanup_exipred_qrcode;
  * @copyright 2026 MoodleMootDACH
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+use auth_qrcode\task\cleanup_exipred_qrcode;
 
 defined('MOODLE_INTERNAL') || die();
 

@@ -16,11 +16,9 @@
 
 namespace auth_qrcode\event;
 
-use coding_exception;
+use context_system;
 
 defined("MOODLE_INTERNAL") || die();
-
-use context_system;
 
 /**
  * Registration base event for module context
@@ -30,39 +28,39 @@ use context_system;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class login_authorized extends \core\event\base {
+    /**
+     * Returns the localised event name.
+     *
+     * @return string
+     */
+    public static function get_name(): string {
+        return "User authorized the login via QR code";
+    }
 
     /**
-	 *
-	 * @return string
-	 */
-	public static function get_name(): string {
-		return "User authorized the login via QR code";
-	}
+     * (non-PHPdoc)
+     * @see \core\event\base::get_description()
+     */
+    public function get_description(): string {
+        return "The user with id '$this->userid' authorized the login via QR code with token '{$this->other['token']}'.";
+    }
 
-	/**
-	 * (non-PHPdoc)
-	 * @see \core\event\base::get_description()
-	 */
-	public function get_description(): string {
-		return "The user with id '$this->userid' authorized the login via QR code with token '{$this->other['token']}'.";
-	}
+    /**
+     * (non-PHPdoc)
+     * @see \core\event\base::get_url()
+     */
+    public function get_url() {
+        return null;
+    }
 
-	/**
-	 * (non-PHPdoc)
-	 * @see \core\event\base::get_url()
-	 */
-	public function get_url() {
-		return NULL;
-	}
-
-	/**
-	 * (non-PHPdoc)
+    /**
+     * (non-PHPdoc)
      * @see \core\event\base::init()
-	 */
-	protected function init() {
-		$this->data["crud"] = "u";
-		$this->data["edulevel"] = self::LEVEL_OTHER;
-		$this->data["objecttable"] = "auth_qrcode";
+     */
+    protected function init() {
+        $this->data["crud"] = "u";
+        $this->data["edulevel"] = self::LEVEL_OTHER;
+        $this->data["objecttable"] = "auth_qrcode";
         $this->context = context_system::instance();
     }
 }

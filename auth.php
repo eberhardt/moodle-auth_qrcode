@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/authlib.php');
 
-use \core\notification;
+use core\notification;
 
 // For further information about authentication plugins please read
 // https://docs.moodle.org/dev/Authentication_plugins.
@@ -134,7 +134,7 @@ class auth_plugin_qrcode extends auth_plugin_base {
         $url = new moodle_url('/auth/qrcode/login.php');
 
         // You can also specify an icon to be displayed on the button.
-        // If you have an icon at auth/qrcode/pix/icon.svg:
+        // If you have an icon at auth/qrcode/pix/icon.svg.
         $iconurl = new moodle_url('/auth/qrcode/pix/qr.png');
 
         return [
@@ -142,12 +142,16 @@ class auth_plugin_qrcode extends auth_plugin_base {
                 'url' => $url,
                 'iconurl' => $iconurl,
                 'name' => get_string('pluginname', 'auth_qrcode'),
-            ]
+            ],
         ];
     }
 
     /**
-     * @inheritdoc
+     * Restores the previous auth method if someone tries to set this plugin as a user's login method.
+     *
+     * @param stdClass $olduser
+     * @param stdClass $newuser
+     * @return bool
      */
     public function user_update($olduser, $newuser): bool {
         if ($newuser->auth == $this->authtype) {
@@ -155,7 +159,7 @@ class auth_plugin_qrcode extends auth_plugin_base {
             $newuser->auth = $authinst->authtype;
             $a = [
                 "auth" => $authinst->get_title(),
-                "name" => fullname($newuser)
+                "name" => fullname($newuser),
             ];
             $message = get_string('cannot_use_as_login_method', 'auth_qrcode', $a);
             notification::add($message, notification::ERROR);

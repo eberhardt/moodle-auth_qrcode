@@ -66,7 +66,7 @@ if (optional_param('allow', false, PARAM_BOOL)) {
         $event = \auth_qrcode\event\login_authorized::create([
             "userid" => $USER->id,
             "objectid" => $USER->id,
-            "other" => ['token' => $token]
+            "other" => ['token' => $token],
         ]);
         $event->trigger();
     } else {
@@ -83,7 +83,7 @@ if (!$tokeninfo) {
     echo $OUTPUT->footer();
     exit;
 }
-// else $tokeninfo is an array
+// Otherwise $tokeninfo is an array.
 $tokeninfo["yes_url"] = new moodle_url('/auth/qrcode/confirm.php', ['token' => $token, 'allow' => 1]);
 $tokeninfo["no_url"] = new moodle_url('/auth/qrcode/confirm.php', ['token' => $token, 'deny' => 1]);
 

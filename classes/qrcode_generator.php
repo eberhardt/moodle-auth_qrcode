@@ -43,7 +43,7 @@ class qrcode_generator {
      */
     public static function generate_qrcode_data(moodle_url $uri) {
         $qrcode = new  \TCPDF2DBarcode($uri->out(), 'QRCODE');
-        $image_data = base64_encode($qrcode->getBarcodeSVGcode(20, 20));
-        return 'data:image/svg+xml;base64,' . $image_data;
+        $imagedata = base64_encode($qrcode->getBarcodeSVGcode(20, 20));
+        return 'data:image/svg+xml;base64,' . $imagedata;
     }
 }

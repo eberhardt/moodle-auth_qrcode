@@ -60,7 +60,7 @@ class check_login extends external_api {
                 $event = logged_in::create([
                     'userid' => $USER->id,
                     'objectid' => $USER->id,
-                    'other' => ['token' => $SESSION->auth_qrcode_token]
+                    'other' => ['token' => $SESSION->auth_qrcode_token],
                 ]);
                 $event->trigger();
                 return [

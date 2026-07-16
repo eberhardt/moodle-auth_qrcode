@@ -25,7 +25,8 @@
 use auth_qrcode\qrcode_generator;
 use auth_qrcode\token_creator;
 
-require_once(__DIR__ . '/../../config.php');
+// This page is part of the login flow, so no login check is possible here.
+require_once(__DIR__ . '/../../config.php'); // phpcs:ignore moodle.Files.RequireLogin
 
 if (!is_enabled_auth('qrcode')) {
     throw new moodle_exception(get_string('pluginisdisabled', 'auth_qrcode'));
@@ -53,10 +54,10 @@ if ($logo) {
 
 // QR-Code.
 $url = new moodle_url('/auth/qrcode/confirm.php', ["token" => token_creator::create()]);
-$template_data = [
-    "qrcode_data" => qrcode_generator::generate_qrcode_data($url)
+$templatedata = [
+    "qrcode_data" => qrcode_generator::generate_qrcode_data($url),
 ];
-echo $OUTPUT->render_from_template("auth_qrcode/login", $template_data);
+echo $OUTPUT->render_from_template("auth_qrcode/login", $templatedata);
 
 $PAGE->requires->js_call_amd('auth_qrcode/check', 'init');
 

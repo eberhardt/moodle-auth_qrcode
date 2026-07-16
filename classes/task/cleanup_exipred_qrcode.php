@@ -27,7 +27,6 @@ use auth_qrcode\db\model\qrcode;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class cleanup_exipred_qrcode extends \core\task\scheduled_task {
-
     /**
      * Name of task
      *
