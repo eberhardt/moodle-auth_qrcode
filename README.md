@@ -28,6 +28,13 @@ After scanning the QR code with a device that's already signed in, the user conf
 
 ---
 
+## Requirements ##
+
+* Moodle **4.5 LTS** to **5.2** (branches 405–502).
+* PHP **8.1** or newer.
+
+---
+
 ## Installing via uploaded ZIP file ##
 
 1. Log in to your Moodle site as an admin and go to _Site administration >
@@ -40,7 +47,7 @@ After scanning the QR code with a device that's already signed in, the user conf
 
 The plugin can be also installed by putting the contents of this directory to
 
-    {your/moodle/dirroot}/auth/qr_login
+    {your/moodle/dirroot}/auth/qrcode
 
 Afterwards, log in to your Moodle site as an admin and go to _Site administration >
 Notifications_ to complete the installation.

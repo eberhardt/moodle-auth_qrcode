@@ -25,7 +25,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'auth_qrcode';
-$plugin->release = '0.1.0';
-$plugin->version = 2026063001;
-$plugin->requires = 2025100601;
+$plugin->release = '0.1.1';
+$plugin->version = 2026063002;
+$plugin->requires = 2024100700; // Moodle 4.5.0.
+$plugin->supported = [405, 502]; // Moodle 4.5 LTS to 5.2.
 $plugin->maturity = MATURITY_ALPHA;
