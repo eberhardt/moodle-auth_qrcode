@@ -18,20 +18,23 @@ namespace auth_qrcode\external;
 
 defined('MOODLE_INTERNAL') || die();
 
+global $CFG;
 require_once($CFG->dirroot . '/login/lib.php');
 
 use auth_qrcode\db\model\qrcode;
 use auth_qrcode\event\logged_in;
+use coding_exception;
 use core_external\external_api;
 use core_external\external_function_parameters;
 use core_external\external_single_structure;
 use core_external\external_value;
+use moodle_exception;
 
 /**
  * Web Service to check if this session has been authorized from another device and log in the user.
  *
  * @package     auth_qrcode
- * @copyright   2025 Your Name <you@example.com>
+ * @copyright   2026 MoodleMootDACH
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class check_login extends external_api {
@@ -47,7 +50,9 @@ class check_login extends external_api {
     /**
      * Check if this session has been authorized from another device and log in the user.
      *
-     * @return array{status: 'waiting_auth'|'authorized'|'not_authorized'|'token_not_found'}
+     * @return array
+     * @throws coding_exception
+     * @throws moodle_exception
      */
     public static function execute(): array {
         global $SESSION, $USER;
@@ -60,7 +65,7 @@ class check_login extends external_api {
                 $event = logged_in::create([
                     'userid' => $USER->id,
                     'objectid' => $USER->id,
-                    'other' => ['token' => $SESSION->auth_qrcode_token]
+                    'other' => ['token' => $SESSION->auth_qrcode_token],
                 ]);
                 $event->trigger();
                 return [

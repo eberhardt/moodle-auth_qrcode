@@ -18,7 +18,7 @@
  * Define services for plugin.
  *
  * @package     auth_qrcode
- * @copyright   2025 Your Name <you@example.com>
+ * @copyright   2026 MoodleMootDACH
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

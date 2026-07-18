@@ -16,8 +16,11 @@
 
 namespace auth_qrcode\db\model;
 
+use coding_exception;
 use core\invalid_persistent_exception;
 use core\persistent;
+use dml_exception;
+use stdClass;
 
 /**
  * Persistent model representing a QR code login attempt.
@@ -31,7 +34,6 @@ use core\persistent;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qrcode extends persistent {
-
     /**
      * {@inheritDoc}
      */
@@ -45,8 +47,9 @@ class qrcode extends persistent {
      * @param string|null $useragent The user agent string to parse for OS and browser. Defaults to current UA.
      * @param int|null $duration Optional duration in seconds from now. If not set it defaults to 60.
      * @return self|null The created persistent object, or null if token already exists.
-     * @throws \coding_exception
+     * @throws coding_exception
      * @throws invalid_persistent_exception
+     * @throws dml_exception
      */
     public static function create_record(
         string $token,
@@ -90,41 +93,50 @@ class qrcode extends persistent {
      * @param string $token
      * @param int|null $duration Optional duration in seconds from now. If not set it defaults to 60.
      * @return self|null
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws invalid_persistent_exception
      */
     public static function allow(int $userid, string $token, ?int $duration = null): false|self {
         $existing = self::get_record([
             'token' => $token,
-            'status' => 'in_use'
+            'status' => 'in_use',
         ]);
-        if ($existing) {
-            if (self::is_record_expired($existing)) {
-                return false;
-            }
-            $existing->set('userid', $userid);
-            $existing->set('status', 'allowed');
-            $existing->set('timeexpires', self::calculate_expiry($duration)); // Extend timer.
-            $existing->update();
-            return $existing;
+        if (!$existing) {
+            return false;
         }
-        return false;
+        if (self::is_record_expired($existing)) {
+            return false;
+        }
+        $existing->set('userid', $userid);
+        $existing->set('status', 'allowed');
+        $existing->set('timeexpires', self::calculate_expiry($duration)); // Extend timer.
+        $existing->update();
+        return $existing;
     }
 
     /**
      * Denies a QR code login attempt.
      *
      * @param string $token The unique token.
-     * @return void
+     * @return bool Whether the QR code login attempt was denied.
+     * @throws coding_exception
+     * @throws invalid_persistent_exception
+     * @throws dml_exception
      */
-    public static function deny(string $token): void {
+    public static function deny(string $token): bool {
         $existing = self::get_record([
             'token' => $token,
-            'status' => 'in_use'
+            'status' => 'in_use',
         ]);
-        if ($existing) {
-            $existing->set('status', 'denied');
-            $existing->set('timeexpires', self::calculate_expiry(10)); //set expire to 10 seconds.
-            $existing->update();
+        if (!$existing) {
+            return false;
         }
+
+        $existing->set('status', 'denied');
+        $existing->set('timeexpires', self::calculate_expiry(10)); // Set expire to 10 seconds.
+        $existing->update();
+        return true;
     }
 
     /**
@@ -133,32 +145,34 @@ class qrcode extends persistent {
      * @param string $token The unique token.
      * @param int|null $duration Optional duration in seconds from now. If not set it defaults to 60.
      * @return array|false Array with ip, os, and browser, or false if not found or expired.
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws invalid_persistent_exception
      */
-    public static function get_loginattemp_info(string $token, ?int $duration = null): array|false {
+    public static function get_loginattempt_info(string $token, ?int $duration = null): array|false {
         global $DB;
-
         $existing = self::get_record([
             'token' => $token,
-            'status' => 'created'
+            'status' => 'created',
         ]);
-        if ($existing) {
-            if (self::is_record_expired($existing)) {
-                return false;
-            }
-
-            $existing->set('status', 'in_use');
-            $existing->set('timeexpires', self::calculate_expiry($duration)); // Extend timer.
-            $existing->update();
-
-            $session = $DB->get_record('sessions', ['id' => $existing->get('initial_sessionid')], 'lastip');
-
-            return [
-                'ip' => $session ? $session->lastip : 'Unknown',
-                'os' => $existing->get('requester_os'),
-                'browser' => $existing->get('requester_browser'),
-            ];
+        if (!$existing) {
+            return false;
         }
-        return false;
+        if (self::is_record_expired($existing)) {
+            return false;
+        }
+
+        $existing->set('status', 'in_use');
+        $existing->set('timeexpires', self::calculate_expiry($duration)); // Extend timer.
+        $existing->update();
+
+        $session = $DB->get_record('sessions', ['id' => $existing->get('initial_sessionid')], 'lastip');
+
+        return [
+            'ip' => $session ? $session->lastip : 'Unknown',
+            'os' => $existing->get('requester_os'),
+            'browser' => $existing->get('requester_browser'),
+        ];
     }
 
     /**
@@ -166,9 +180,11 @@ class qrcode extends persistent {
      *
      * @param string $token The unique token.
      * @param string $sid The session ID string.
-     * @return string|\stdClass 'waiting', 'denied', 'expired' or the user object.
+     * @return string|stdClass 'waiting', 'denied', 'expired' or the user object.
+     * @throws coding_exception
+     * @throws dml_exception
      */
-    public static function can_user_login(string $token, string $sid): string|\stdClass {
+    public static function can_user_login(string $token, string $sid): string|stdClass {
         $sessionid = self::get_session_id($sid);
         if ($sessionid === null) { // Check like this because sessionid could be 0 (zero).
             return 'expired';
@@ -177,19 +193,20 @@ class qrcode extends persistent {
             'token' => $token,
             'initial_sessionid' => $sessionid,
         ]);
-        if ($existing) {
-            if (self::is_record_expired($existing)) {
-                return 'expired';
-            }
-            if ($existing->get('status') === 'allowed') {
-                return $existing->get_user_record();
-            }
-            if ($existing->get('status') === 'created' || $existing->get('status') === 'in_use') {
-                return 'waiting';
-            }
-            if ($existing->get('status') === 'denied') {
-                return 'denied';
-            }
+        if (!$existing) {
+            return 'expired';
+        }
+        if (self::is_record_expired($existing)) {
+            return 'expired';
+        }
+        if ($existing->get('status') === 'allowed') {
+            return $existing->get_user_record();
+        }
+        if ($existing->get('status') === 'created' || $existing->get('status') === 'in_use') {
+            return 'waiting';
+        }
+        if ($existing->get('status') === 'denied') {
+            return 'denied';
         }
         return 'expired';
     }
@@ -197,9 +214,11 @@ class qrcode extends persistent {
     /**
      * Returns the user associated with this QR login attempt.
      *
-     * @return \stdClass|null
+     * @return stdClass|null
+     * @throws coding_exception
+     * @throws dml_exception
      */
-    public function get_user_record(): ?\stdClass {
+    public function get_user_record(): ?stdClass {
         global $DB;
 
         $userid = $this->get('userid');
@@ -214,6 +233,7 @@ class qrcode extends persistent {
      *
      * @param int|null $timestamp The timestamp to compare against. If null, current time is used.
      * @return void
+     * @throws dml_exception
      */
     public static function delete_expired(?int $timestamp = null): void {
         global $DB;
@@ -226,6 +246,7 @@ class qrcode extends persistent {
      *
      * @param string $sid The session ID string.
      * @return int|null The session database ID or null if not found.
+     * @throws dml_exception
      */
     private static function get_session_id(string $sid): ?int {
         global $DB;
@@ -248,6 +269,7 @@ class qrcode extends persistent {
      *
      * @param self $record The record to check.
      * @return bool True if expired, false otherwise.
+     * @throws coding_exception
      */
     private static function is_record_expired(self $record): bool {
         if ($record->get('timeexpires') < time()) {
@@ -300,7 +322,7 @@ class qrcode extends persistent {
     /**
      * {@inheritDoc}
      */
-    protected static function define_properties() {
+    protected static function define_properties(): array {
         return [
             'token' => ['type' => PARAM_ALPHANUMEXT],
             'initial_sessionid' => ['type' => PARAM_INT],

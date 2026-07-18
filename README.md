@@ -1,4 +1,4 @@
-# 🚀 Login via QR #
+# 🚀 Login via QR
 
 ### 😩 Ever tried typing your password on...
 
@@ -22,13 +22,13 @@ Just **Scan → Confirm → Login.** 🎉
 
 ### 🔐 How it works
 
-When the login page is opened, Moodle creates a temporary QR login request containing a random token and the a secret. The QR code only contains the token.
+When the login page is opened, Moodle creates a temporary QR login request containing a random token and a secret. The QR code only contains the token.
 
 After scanning the QR code with a device that's already signed in, the user confirms the login. Moodle then verifies that the request belongs to the same browser that generated the QR code before completing the login. Once used (or expired), the QR login request is removed and cannot be used again.
 
 ---
 
-## Installing via uploaded ZIP file ##
+## Installing via uploaded ZIP file
 
 1. Log in to your Moodle site as an admin and go to _Site administration >
    Plugins > Install plugins_.
@@ -36,11 +36,11 @@ After scanning the QR code with a device that's already signed in, the user conf
    extra details if your plugin type is not automatically detected.
 3. Check the plugin validation report and finish the installation.
 
-## Installing manually ##
+## Installing manually
 
 The plugin can be also installed by putting the contents of this directory to
 
-    {your/moodle/dirroot}/auth/qr_login
+    {your/moodle/dirroot}/public/auth/qrcode
 
 Afterwards, log in to your Moodle site as an admin and go to _Site administration >
 Notifications_ to complete the installation.
@@ -51,7 +51,7 @@ Alternatively, you can run
 
 to complete the installation from the command line.
 
-## License ##
+## License
 
 2026 MoodleMootDACH
 

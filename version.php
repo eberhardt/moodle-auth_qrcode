@@ -18,14 +18,15 @@
  * Plugin version and other meta-data are defined here.
  *
  * @package     auth_qrcode
- * @copyright   2025 Your Name <you@example.com>
+ * @copyright   2026 MoodleMootDACH
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
+isset($plugin) || die('$plugin variable not set');
 
 $plugin->component = 'auth_qrcode';
 $plugin->release = '0.1.0';
-$plugin->version = 2026063001;
+$plugin->version = 2026071500;
 $plugin->requires = 2025100601;
 $plugin->maturity = MATURITY_ALPHA;

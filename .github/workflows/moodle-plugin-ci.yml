@@ -1,6 +1,6 @@
 name: Moodle Plugin CI
 
-on: [ workflow_dispatch ] #[ push, pull_request, workflow_dispatch ]
+on: [ push, pull_request, workflow_dispatch ]
 
 jobs:
   test:

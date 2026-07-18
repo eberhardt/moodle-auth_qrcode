@@ -29,6 +29,7 @@ use moodle_url;
 
 defined('MOODLE_INTERNAL') || die();
 
+global $CFG;
 require_once($CFG->libdir . '/tcpdf/tcpdf_barcodes_2d.php');
 
 /**
@@ -41,9 +42,9 @@ class qrcode_generator {
      * @param moodle_url $uri
      * @return string
      */
-    public static function generate_qrcode_data(moodle_url $uri) {
+    public static function generate_qrcode_data(moodle_url $uri): string {
         $qrcode = new  \TCPDF2DBarcode($uri->out(), 'QRCODE');
-        $image_data = base64_encode($qrcode->getBarcodeSVGcode(20, 20));
-        return 'data:image/svg+xml;base64,' . $image_data;
+        $imagedata = base64_encode($qrcode->getBarcodeSVGcode(20, 20));
+        return 'data:image/svg+xml;base64,' . $imagedata;
     }
 }

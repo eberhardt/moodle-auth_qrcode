@@ -15,19 +15,29 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template auth_qrcode/login
+    @template auth_qrcode/confirmation
+
+    Example context (json):
+    {
+        "ip": "1.2.3.4",
+        "os": "Ubuntu Linux",
+        "browser": "Microsoft Firefox",
+        "sesskey": "abcdef0123456"
+    }
 }}
 <div class="confirmation-container">
-    <!-- Confirmation message -->
+    {{! Confirmation message }}
     <div class="confirmation-message mt-3 mb-3">{{#str}}confirmation, auth_qrcode{{/str}}</div>
     <ul class="token-info">
         <li>{{#str}}ip, auth_qrcode{{/str}}: {{ip}}</li>
         <li>{{#str}}os, auth_qrcode{{/str}}: {{os}}</li>
         <li>{{#str}}browser, auth_qrcode{{/str}}: {{browser}}</li>
     </ul>
-    <!-- Confirmation buttons -->
-    <div class="confirmation-buttons text-center">
-        <a href="{{{yes_url}}}" class="btn btn-primary w-50 mb-3">{{#str}}yes, core{{/str}}</a>
-        <a href="{{{no_url}}}" class="btn btn-secondary w-50">{{#str}}no, core{{/str}}</a>
-    </div>
+    {{! Confirmation buttons }}
+    <form class="confirmation-buttons text-center" method="post">
+        <input type="hidden" name="sesskey" value="{{sesskey}}">
+
+        <button type="submit" name="allow" value="1" class="btn btn-primary w-50 mb-3">{{#str}}yes, core{{/str}}</button>
+        <button type="submit" name="deny" value="1" class="btn btn-secondary w-50">{{#str}}no, core{{/str}}</button>
+    </form>
 </div>

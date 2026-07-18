@@ -13,7 +13,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-use auth_qrcode\task\cleanup_exipred_qrcode;
 
 /**
  * Install scheduled tasks.
@@ -24,11 +23,13 @@ use auth_qrcode\task\cleanup_exipred_qrcode;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use auth_qrcode\task\cleanup_expired_qrcodes;
+
 defined('MOODLE_INTERNAL') || die();
 
 $tasks = [
     [
-        'classname' => cleanup_exipred_qrcode::class,
+        'classname' => cleanup_expired_qrcodes::class,
         'blocking' => 0,
         'minute' => '0',
         'hour' => '*',

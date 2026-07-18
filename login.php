@@ -18,17 +18,20 @@
  * auth_qrcode login.php description here.
  *
  * @package    auth_qrcode
- * @copyright  2026 <>
+ * @copyright  2026 MoodleMootDACH
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 use auth_qrcode\qrcode_generator;
 use auth_qrcode\token_creator;
 
+// phpcs:ignore moodle.Files.RequireLogin.Missing
 require_once(__DIR__ . '/../../config.php');
 
+global $PAGE, $OUTPUT, $SITE;
+
 if (!is_enabled_auth('qrcode')) {
-    throw new moodle_exception(get_string('pluginisdisabled', 'auth_qrcode'));
+    throw new moodle_exception('pluginisdisabled', 'auth_qrcode');
 }
 
 if (isloggedin() && !isguestuser()) {
@@ -53,10 +56,10 @@ if ($logo) {
 
 // QR-Code.
 $url = new moodle_url('/auth/qrcode/confirm.php', ["token" => token_creator::create()]);
-$template_data = [
-    "qrcode_data" => qrcode_generator::generate_qrcode_data($url)
+$data = [
+    "qrcode_data" => qrcode_generator::generate_qrcode_data($url),
 ];
-echo $OUTPUT->render_from_template("auth_qrcode/login", $template_data);
+echo $OUTPUT->render_from_template("auth_qrcode/login", $data);
 
 $PAGE->requires->js_call_amd('auth_qrcode/check', 'init');
 

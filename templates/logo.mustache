@@ -16,7 +16,13 @@
 }}
 {{!
     @template auth_qrcode/logo
+
+    Example context (json):
+    {
+        "logo_url": "https://example.com",
+        "site_fullname": "Test Site"
+    }
 }}
 <div class="text-center mb-5">
-    <img src="{{logo_url}}" alt="{{site_fullname}}" id="auth_qrcode-logo" class="img-fluid" />
+    <img src="{{logo_url}}" alt="{{site_fullname}}" id="auth_qrcode-logo" class="img-fluid">
 </div>

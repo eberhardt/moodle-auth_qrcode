@@ -17,6 +17,9 @@
 namespace auth_qrcode\task;
 
 use auth_qrcode\db\model\qrcode;
+use coding_exception;
+use dml_exception;
+use moodle_exception;
 
 /**
  * Scheduled task to cleanup expired QR login records.
@@ -26,24 +29,24 @@ use auth_qrcode\db\model\qrcode;
  * @copyright 2026 MoodleMootDACH
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cleanup_exipred_qrcode extends \core\task\scheduled_task {
-
+class cleanup_expired_qrcodes extends \core\task\scheduled_task {
     /**
      * Name of task
      *
      * @return string
+     * @throws coding_exception
      */
-    public function get_name() {
+    public function get_name(): string {
         return get_string('task:cleanup_expired_qrcode', 'auth_qrcode');
     }
 
     /**
      * Execute the task.
      *
-     * @throws \dml_exception
-     * @throws \moodle_exception
+     * @throws dml_exception
+     * @throws moodle_exception
      */
-    public function execute() {
+    public function execute(): void {
         qrcode::delete_expired();
     }
 }

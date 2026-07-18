@@ -11,17 +11,11 @@ import Ajax from 'core/ajax';
 // Interval ID.
 let checkInterval;
 
-// Timer ID.
-let expirationTimer;
-
 /**
  * Setup the periodic check of the QR code authentication status.
  */
 export function init() {
     checkInterval = setInterval(checkNow, 2000);
-
-    // Expire the QR code after 60 seconds.
-    expireQRCode(60);
 }
 
 /**
@@ -33,59 +27,35 @@ async function checkNow() {
         args: {}
     }])[0];
     if (check.status === 'authorized') {
+        clearInterval(checkInterval);
         window.location.href = check.wantsurl;
     } else if (check.status === 'not_authorized') {
-        displayRejection();
-    } else if (check.status === 'token_not_found') {
-        clearTimeout(expirationTimer);
-        expireQRCode(0);
-    }
-}
-
-/**
- * Remove QRCode and display an expiration message when the QR code has expired.
- *
- * @param {number} delay - Delay in seconds before the QR code expires
- * @returns void
- */
-function expireQRCode(delay = 60) {
-    expirationTimer = setTimeout(() => {
-        // Hide the QR code.
-        const qrcode = document.getElementById('qrcode-container');
-        if (qrcode) {
-            qrcode.remove();
+        removeQRCode();
+        // Display the rejection message.
+        const expiration = document.getElementById('rejected-container');
+        if (expiration) {
+            expiration.classList.remove('hidden');
         }
+    } else if (check.status === 'token_not_found') {
+        removeQRCode();
         // Display the expiration message.
         const expiration = document.getElementById('expired-container');
         if (expiration) {
             expiration.classList.remove('hidden');
         }
-
-        // Stop the periodic check.
-        window.console.log("QR code expired, stopping periodic check.");
-        clearInterval(checkInterval);
-    }, delay * 1000);
+    }
 }
 
 /**
- * Hide QRCode and display a rejection message when the QR code is rejected.
+ * Remove QRCode and stop the periodic check.
  */
-function displayRejection() {
-
+function removeQRCode() {
     // Stop the periodic check.
     clearInterval(checkInterval);
-
-    // Clear the expiration timer.
-    clearTimeout(expirationTimer);
 
     // Hide the QR code.
     const qrcode = document.getElementById('qrcode-container');
     if (qrcode) {
         qrcode.remove();
-    }
-    // Display the rejection message.
-    const expiration = document.getElementById('rejected-container');
-    if (expiration) {
-        expiration.classList.remove('hidden');
     }
 }

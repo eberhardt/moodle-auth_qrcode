@@ -26,6 +26,8 @@
 namespace auth_qrcode;
 
 use coding_exception;
+use core\invalid_persistent_exception;
+use dml_exception;
 
 /**
  * Token validator class.
@@ -37,12 +39,15 @@ class token_creator {
      * This always creates a new token even if the user already has one.
      *
      * @return string new token
+     * @throws invalid_persistent_exception
+     * @throws dml_exception
+     * @throws coding_exception
      */
-    public static function create() {
+    public static function create(): string {
         global $SESSION;
 
         // Each random byte will be mapped into a number between 0 and 61, that means an entropy of 62.
-        // Therefore, a length of 34 wil provide a security of log(62, 2) * 34 ~ 202 bits.
+        // Therefore, a length of 34 will provide a security of log(62, 2) * 34 ~ 202 bits.
         $token = random_string(34);
         if (db\model\qrcode::create_record($token, session_id())) {
             $SESSION->auth_qrcode_token = $token;

@@ -16,12 +16,17 @@
 }}
 {{!
     @template auth_qrcode/login
+
+    Example context (json):
+    {
+        "qrcode_data": "data:image/svg+xml;base64,AAAA"
+    }
 }}
 <div id="auth_qrcode">
     <h3>Login with QR-Code</h3>
     <div id="qrcode-container" class="text-center mt-5 mb-5">
-        <img width="80%" src="{{qrcode_data}}" />
-        <div class="qrcode-instructions mt-5 text-left">
+        <img alt="{{#str}}qrcode_for_login, auth_qrcode{{/str}}" src="{{qrcode_data}}" class="qrcode">
+        <div class="qrcode-instructions mt-5 text-start">
             <ol>
                 <li>{{#str}}instruction_1, auth_qrcode{{/str}}</li>
                 <li>{{#str}}instruction_2, auth_qrcode{{/str}}</li>
@@ -30,17 +35,17 @@
         </div>
     </div>
     <div id="expired-container" class="text-center mt-5 mb-3 hidden">
-        <img width="80%" src="{{qrcode_data}}" class="qrcode-blured" />
+        <img src="{{qrcode_data}}" alt="{{#str}}qrcode_for_login, auth_qrcode{{/str}}" class="qrcode qrcode-blured">
         <div class="qrcode-alert mt-5 mb-5">{{#str}}qrcode_expired, auth_qrcode{{/str}}</div>
-        <a href="/auth/qrcode/login.php" class="btn btn-primary w-75">{{#str}}get_new_qrcode, auth_qrcode{{/str}}</a>
+        <a href="{{config.wwwroot}}/auth/qrcode/login.php" class="btn btn-primary w-75">{{#str}}get_new_qrcode, auth_qrcode{{/str}}</a>
     </div>
     <div id="rejected-container" class="text-center mt-5 mb-3 hidden">
-        <img width="80%" src="{{qrcode_data}}" class="qrcode-blured" />
+        <img src="{{qrcode_data}}" alt="{{#str}}qrcode_for_login, auth_qrcode{{/str}}" class="qrcode qrcode-blured">
         <div class="qrcode-alert mt-5 mb-5">{{#str}}login_rejected, auth_qrcode{{/str}}</div>
-        <a href="/auth/qrcode/login.php" class="btn btn-primary w-75">{{#str}}get_new_qrcode, auth_qrcode{{/str}}</a>
+        <a href="{{config.wwwroot}}/auth/qrcode/login.php" class="btn btn-primary w-75">{{#str}}get_new_qrcode, auth_qrcode{{/str}}</a>
     </div>
     <div class="text-center">
-        <a href="/login/" class="btn btn-secondary w-75">Back to Login</a>
+        <a href="{{config.wwwroot}}/login/" class="btn btn-secondary w-75">Back to Login</a>
     </div>
     <!-- TODO: remove redundant img by moving the rejected/expired-container into qrcode-container -->
 </div>

@@ -18,15 +18,16 @@
  * Authentication class for qr_login is defined here.
  *
  * @package     auth_qrcode
- * @copyright   2025 Your Name <you@example.com>
+ * @copyright   2026 MoodleMootDACH
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
+global $CFG;
 require_once($CFG->libdir . '/authlib.php');
 
-use \core\notification;
+use core\notification;
 
 // For further information about authentication plugins please read
 // https://docs.moodle.org/dev/Authentication_plugins.
@@ -47,9 +48,14 @@ class auth_plugin_qrcode extends auth_plugin_base {
     }
 
     /**
-     * Always return false since we do not want to use this as an authentication method.
+     * {inheritDoc}
+     *
+     * @param string $username The username (with system magic quotes)
+     * @param string $password The password (with system magic quotes)
+     * @return bool Authentication success or failure.
      */
-    public function user_login($username, $password) {
+    public function user_login($username, $password): bool {
+        // Always return false since we do not want to use this as an authentication method.
         return false;
     }
 
@@ -58,7 +64,7 @@ class auth_plugin_qrcode extends auth_plugin_base {
      *
      * @return bool
      */
-    public function can_change_password() {
+    public function can_change_password(): bool {
         return false;
     }
 
@@ -67,7 +73,7 @@ class auth_plugin_qrcode extends auth_plugin_base {
      *
      * @return bool
      */
-    public function can_edit_profile() {
+    public function can_edit_profile(): bool {
         return false;
     }
 
@@ -78,7 +84,7 @@ class auth_plugin_qrcode extends auth_plugin_base {
      *
      * @return bool
      */
-    public function is_internal() {
+    public function is_internal(): bool {
         return true;
     }
 
@@ -87,7 +93,7 @@ class auth_plugin_qrcode extends auth_plugin_base {
      *
      * @return bool.
      */
-    public function can_reset_password() {
+    public function can_reset_password(): bool {
         return false;
     }
 
@@ -96,7 +102,7 @@ class auth_plugin_qrcode extends auth_plugin_base {
      *
      * @return bool
      */
-    public function can_signup() {
+    public function can_signup(): bool {
         return false;
     }
 
@@ -105,7 +111,7 @@ class auth_plugin_qrcode extends auth_plugin_base {
      *
      * @return bool
      */
-    public function can_confirm() {
+    public function can_confirm(): bool {
         return false;
     }
 
@@ -118,7 +124,7 @@ class auth_plugin_qrcode extends auth_plugin_base {
      *
      * @return bool
      */
-    public function can_be_manually_set() {
+    public function can_be_manually_set(): bool {
         return false;
     }
 
@@ -127,14 +133,13 @@ class auth_plugin_qrcode extends auth_plugin_base {
      *
      * @param string|moodle_url $wantsurl The requested URL.
      * @return array List of arrays with keys url, iconurl and name.
+     * @throws coding_exception
      */
-    public function loginpage_idp_list($wantsurl) {
+    public function loginpage_idp_list($wantsurl): array {
         // This is the URL the user will be sent to when clicking the button.
-        // You should create a login.php file in your plugin directory to handle the QR logic.
         $url = new moodle_url('/auth/qrcode/login.php');
 
-        // You can also specify an icon to be displayed on the button.
-        // If you have an icon at auth/qrcode/pix/icon.svg:
+        // Specify an icon to be displayed on the button.
         $iconurl = new moodle_url('/auth/qrcode/pix/qr.png');
 
         return [
@@ -142,12 +147,17 @@ class auth_plugin_qrcode extends auth_plugin_base {
                 'url' => $url,
                 'iconurl' => $iconurl,
                 'name' => get_string('pluginname', 'auth_qrcode'),
-            ]
+            ],
         ];
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
+     *
+     * @param mixed $olduser Userobject before modifications    (without system magic quotes)
+     * @param mixed $newuser Userobject new modified userobject (without system magic quotes)
+     * @return boolean true if updated or update ignored; false if error
+     * @throws moodle_exception If an error occurs during the update process.
      */
     public function user_update($olduser, $newuser): bool {
         if ($newuser->auth == $this->authtype) {
@@ -155,7 +165,7 @@ class auth_plugin_qrcode extends auth_plugin_base {
             $newuser->auth = $authinst->authtype;
             $a = [
                 "auth" => $authinst->get_title(),
-                "name" => fullname($newuser)
+                "name" => fullname($newuser),
             ];
             $message = get_string('cannot_use_as_login_method', 'auth_qrcode', $a);
             notification::add($message, notification::ERROR);

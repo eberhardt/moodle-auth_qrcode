@@ -12,6 +12,10 @@
     color: red;
 }
 
+.qrcode {
+    width: 80%;
+}
+
 .qrcode-blured {
     filter: blur(10px);
 }
