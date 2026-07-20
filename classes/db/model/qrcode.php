@@ -16,7 +16,7 @@
 
 namespace auth_qrcode\db\model;
 
-use coding_exception;
+use core\exception\coding_exception;
 use core\invalid_persistent_exception;
 use core\persistent;
 use dml_exception;
@@ -45,7 +45,8 @@ class qrcode extends persistent {
      * @param string $token The unique token.
      * @param string $sid The session ID string that requested the QR code.
      * @param string|null $useragent The user agent string to parse for OS and browser. Defaults to current UA.
-     * @param int|null $duration Optional duration in seconds from now. If not set it defaults to 60.
+     * @param int|null $duration Optional duration in seconds from now. If not set it defaults to value of
+     * auth_qrcode/expirationtime setting.
      * @return self|null The created persistent object, or null if token already exists.
      * @throws coding_exception
      * @throws invalid_persistent_exception
@@ -91,7 +92,8 @@ class qrcode extends persistent {
      *
      * @param int $userid
      * @param string $token
-     * @param int|null $duration Optional duration in seconds from now. If not set it defaults to 60.
+     * @param int|null $duration Optional duration in seconds from now. If not set it defaults to value of
+     * auth_qrcode/expirationtime setting.
      * @return self|null
      * @throws coding_exception
      * @throws dml_exception
@@ -143,7 +145,8 @@ class qrcode extends persistent {
      * Retrieves information about a login attempt and marks it as in use.
      *
      * @param string $token The unique token.
-     * @param int|null $duration Optional duration in seconds from now. If not set it defaults to 60.
+     * @param int|null $duration Optional duration in seconds from now. If not set it defaults to value of
+     * auth_qrcode/expirationtime setting.
      * @return array|false Array with ip, os, and browser, or false if not found or expired.
      * @throws coding_exception
      * @throws dml_exception
@@ -257,11 +260,15 @@ class qrcode extends persistent {
     /**
      * Calculates an expiry timestamp.
      *
-     * @param int|null $duration Optional duration in seconds from now. Defaults to 60.
+     * @param int|null $duration Optional duration in seconds from now. Defaults to value of auth_qrcode/expirationtime setting.
      * @return int The calculated expiry timestamp.
+     * @throws dml_exception
      */
     private static function calculate_expiry(?int $duration = null): int {
-        return time() + ($duration ?? 60);
+        if ($duration === null) {
+            $duration = intval(get_config('auth_qrcode', 'expirationtime') ?: 60);
+        }
+        return time() + $duration;
     }
 
     /**

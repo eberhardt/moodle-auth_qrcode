@@ -51,6 +51,13 @@ Alternatively, you can run
 
 to complete the installation from the command line.
 
+## Setup
+
+1. Log in to your Moodle site as an admin and go to _Site administration >
+   Plugins > Authentication > Manage authentication_.
+2. Enable the _QR-Code_ plugin by clicking the icon in the _Enable_ column of the _Available authentication plugins_ table.
+3. Configure the plugin settings as needed.
+
 ## License
 
 2026 MoodleMootDACH
