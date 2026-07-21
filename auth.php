@@ -146,7 +146,7 @@ class auth_plugin_qrcode extends auth_plugin_base {
             [
                 'url' => $url,
                 'iconurl' => $iconurl,
-                'name' => get_string('login_using_smartphonee', 'auth_qrcode'),
+                'name' => get_string('login_using_smartphone', 'auth_qrcode'),
             ],
         ];
     }
