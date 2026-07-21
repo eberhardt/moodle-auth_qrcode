@@ -20,6 +20,8 @@
  * @package    auth_qrcode
  * @copyright  2026 MoodleMootDACH
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * {@noinspection PhpUnhandledExceptionInspection}
  */
 
 require_once(__DIR__ . '/../../config.php');
@@ -44,6 +46,14 @@ require_login(autologinguest: false);
 
 echo $OUTPUT->header();
 
+// Check if the token is valid.
+$tokeninfo = \auth_qrcode\db\model\qrcode::get_loginattempt_info($token);
+if (!$tokeninfo) {
+    echo $OUTPUT->notification(get_string('invalid_token', 'auth_qrcode'), 'danger', false);
+    echo $OUTPUT->footer();
+    exit;
+}
+
 // Check if user is allowed to log in with their primary method.
 if ($USER->auth == 'nologin' || !is_enabled_auth($USER->auth)) {
     // Suspended accounts will lose their session, no need to check for this explicitly.
@@ -66,13 +76,23 @@ if (optional_param('allow', false, PARAM_BOOL)) {
     require_sesskey();
     $isallowed = \auth_qrcode\db\model\qrcode::allow($USER->id, $token);
     if (is_object($isallowed)) {
-        echo $OUTPUT->notification(get_string('login_confirmed', 'auth_qrcode'), 'success', false);
         $event = \auth_qrcode\event\login_authorized::create([
             "userid" => $USER->id,
             "objectid" => $USER->id,
             "other" => ['token' => $token],
         ]);
         $event->trigger();
+        $confirmationcode = $isallowed->get('confirmationcode');
+        if ($confirmationcode) {
+            // Render page with confirmation code.
+            $context = [
+                'confirmationcode' => $confirmationcode,
+                'sesskey' => sesskey(),
+            ];
+            echo $OUTPUT->render_from_template('auth_qrcode/confirmationcode', $context);
+        } else {
+            echo $OUTPUT->notification(get_string('login_confirmed', 'auth_qrcode'), 'success', false);
+        }
     } else {
         echo $OUTPUT->notification(get_string('expired_or_rejected', 'auth_qrcode'), 'error', false);
     }
@@ -80,14 +100,15 @@ if (optional_param('allow', false, PARAM_BOOL)) {
     exit;
 }
 
-// Check if the token is valid.
-$tokeninfo = \auth_qrcode\db\model\qrcode::get_loginattempt_info($token);
-if (!$tokeninfo) {
-    echo $OUTPUT->notification(get_string('invalid_token', 'auth_qrcode'), 'danger', false);
+// Mark the token as in use.
+$success = \auth_qrcode\db\model\qrcode::set_in_use($token);
+if (!$success) {
+    echo $OUTPUT->notification(get_string('expired_or_rejected', 'auth_qrcode'), 'danger', false);
     echo $OUTPUT->footer();
     exit;
 }
 
+// Add additional template context.
 $tokeninfo['sesskey'] = sesskey();
 $tokeninfo['sitename'] = format_string($SITE->shortname);
 

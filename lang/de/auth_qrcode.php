@@ -26,8 +26,13 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['browser'] = 'Browser';
+$string['cancel_login'] = 'Anmeldung abbrechen';
 $string['cannot_use_as_login_method'] = 'Die Anmeldemethode \'{$a->auth}\' für den Benutzer {$a->name} wurde wiederhergestellt, da die QR-Code-Authentifizierung nicht für normales Anmelden verwendet werden kann.';
 $string['confirmation'] = 'Versuchen Sie gerade, sich per QR-Code auf {$a} anzumelden?';
+$string['confirmationcode'] = 'Bestätigungscode';
+$string['confirmationcodeexplanation'] = 'Bitte geben Sie den folgenden Bestätigungscode auf dem anderen Gerät ein:';
+$string['enterconfirmationcode'] = 'Bestätigungscode eingeben';
+$string['enterconfirmationcodeexplanation'] = 'Bitte geben Sie den Bestätigungscode von Ihrem Smartphone ein.';
 $string['expirationtime'] = 'Ablaufzeit des QR-Codes';
 $string['expirationtime_desc'] = 'Die Dauer in Sekunden, für die ein generierter Anmelde-QR-Code gültig ist. Der Ablauf-Timer wird einmalig auf diesen Wert zurückgesetzt, wenn der/die Nutzer/in die Bestätigungsseite auf dem Mobilgerät zum ersten Mal aufruft. Niedrigere Werte lassen möglicherweise nicht genügend Zeit, um den QR-Code zu scannen, höhere Werte sind möglicherweise ein Sicherheitsrisiko.';
 $string['expired_or_rejected'] = 'Ihre Anmelde-Anfrage ist entweder abgelaufen oder abgelehnt worden. Bitte scannen Sie einen neuen QR-Code.';
@@ -36,6 +41,7 @@ $string['instruction_1'] = 'Öffnen Sie auf Ihrem Smartphone eine Kamera-App, di
 $string['instruction_2'] = 'Scannen Sie den Code.';
 $string['instruction_3'] = 'Folgen Sie den Anweisungen auf Ihrem Smartphone und bestätigen Sie die Anmeldung.';
 $string['invalid_token'] = 'Ungültiges Token';
+$string['invalidconfirmationcode'] = 'Der Bestätigungscode ist ungültig. Bitte versuchen Sie es erneut. ({$a} Versuche verbleibend)';
 $string['ip'] = 'IP-Adresse';
 $string['login_cancelled'] = 'Anmeldung abgelehnt.';
 $string['login_confirmed'] = 'Anmeldung bestätigt. Bitte wechseln Sie zum anderen Gerät.';
@@ -52,5 +58,7 @@ $string['qrcode_for_login'] = 'QR-Code für die Anmeldung.';
 $string['qrcode_instructions'] = 'Scannen Sie den QR-Code mit Ihrem mobilen Gerät.';
 $string['return_to_login'] = 'Zurück zur Anmeldung';
 $string['task:cleanup_expired_qrcode'] = 'Abgelaufene QR-Login-Einträge bereinigen';
+$string['useconfirmationcode'] = 'Bestätigungscode abfragen';
+$string['useconfirmationcode_desc'] = 'Legt fest, ob ein Bestätigungscode auf dem Gerät eingegeben werden muss, das sich anzumelden versucht, nachdem die Anmeldung auf dem Mobilgerät bestätigt wurde. Wenn dies deaktiviert ist, wird das Gerät sofort nach der Bestätigung angemeldet.';
 $string['userauthenticated'] = 'Nutzer/in per QR-Code authentifiziert';
 $string['userauthorizedlogin'] = 'Nutzer/in hat die Anmeldung per QR-Code autorisiert';

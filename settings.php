@@ -37,4 +37,11 @@ if ($ADMIN->fulltree) {
         60,
         PARAM_INT
     ));
+
+    $settings->add(new admin_setting_configcheckbox(
+        'auth_qrcode/useconfirmationcode',
+        new lang_string('useconfirmationcode', 'auth_qrcode'),
+        new lang_string('useconfirmationcode_desc', 'auth_qrcode'),
+        '1'
+    ));
 }

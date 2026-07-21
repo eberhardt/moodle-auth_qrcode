@@ -27,6 +27,6 @@ isset($plugin) || die('$plugin variable not set');
 
 $plugin->component = 'auth_qrcode';
 $plugin->release = '0.1.0';
-$plugin->version = 2026072001;
+$plugin->version = 2026072102;
 $plugin->requires = 2025100601;
 $plugin->maturity = MATURITY_ALPHA;

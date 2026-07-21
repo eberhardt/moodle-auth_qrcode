@@ -44,34 +44,48 @@ class check_login extends external_api {
      * @return external_function_parameters
      */
     public static function execute_parameters(): external_function_parameters {
-        return new external_function_parameters([]);
+        return new external_function_parameters([
+            'confirmationcode' => new external_value(PARAM_ALPHANUM, 'Confirmation code', VALUE_DEFAULT),
+        ]);
     }
 
     /**
      * Check if this session has been authorized from another device and log in the user.
      *
+     * @param string|null $confirmationcode
      * @return array
      * @throws coding_exception
      * @throws moodle_exception
      */
-    public static function execute(): array {
+    public static function execute(string|null $confirmationcode): array {
         global $SESSION, $USER;
+
+        $params = self::validate_parameters(self::execute_parameters(), ['confirmationcode' => $confirmationcode]);
 
         if (isset($SESSION->auth_qrcode_token)) {
             $canlogin = qrcode::can_user_login($SESSION->auth_qrcode_token, session_id());
             if (is_object($canlogin)) {
                 // The other session authorized this token to login as the user that was returned.
-                complete_user_login($canlogin, ['auth_qrcode_login' => true]);
-                $event = logged_in::create([
-                    'userid' => $USER->id,
-                    'objectid' => $USER->id,
-                    'other' => ['token' => $SESSION->auth_qrcode_token],
-                ]);
-                $event->trigger();
-                return [
-                    'status' => 'authorized',
-                    'wantsurl' => \core_login_get_return_url(),
-                ];
+                if (qrcode::check_confirmationcode($SESSION->auth_qrcode_token, $params['confirmationcode'])) {
+                    // Confirmation code is valid or not required, proceed with login.
+                    complete_user_login($canlogin, ['auth_qrcode_login' => true]);
+                    $event = logged_in::create([
+                        'userid' => $USER->id,
+                        'objectid' => $USER->id,
+                        'other' => ['token' => $SESSION->auth_qrcode_token],
+                    ]);
+                    $event->trigger();
+                    return [
+                        'status' => 'authorized',
+                        'wantsurl' => \core_login_get_return_url(),
+                    ];
+                } else {
+                    return [
+                        'status' => 'confirmationcode_required',
+                        'remaining_attempts' => qrcode::get_remaining_attempts($SESSION->auth_qrcode_token),
+                        'confirmationcode_length' => qrcode::CONFIRMATIONCODE_LENGTH,
+                    ];
+                }
             }
             if ($canlogin === 'waiting') {
                 return [
@@ -98,7 +112,9 @@ class check_login extends external_api {
     public static function execute_returns(): external_single_structure {
         return new external_single_structure([
             'status' => new external_value(PARAM_TEXT, 'Status of the login check.'),
-            'wantsurl' => new external_value(PARAM_LOCALURL, 'URL to redirect to', VALUE_OPTIONAL, null, NULL_ALLOWED),
+            'wantsurl' => new external_value(PARAM_LOCALURL, 'URL to redirect to', VALUE_OPTIONAL),
+            'remaining_attempts' => new external_value(PARAM_INT, 'Remaining attempts for confirmation code', VALUE_OPTIONAL),
+            'confirmationcode_length' => new external_value(PARAM_INT, 'Length of confirmation code', VALUE_OPTIONAL),
         ]);
     }
 }
