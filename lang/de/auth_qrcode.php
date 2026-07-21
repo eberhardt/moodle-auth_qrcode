@@ -53,4 +53,4 @@ $string['qrcode_instructions'] = 'Scannen Sie den QR-Code mit Ihrem mobilen Ger�
 $string['return_to_login'] = 'Zurück zur Anmeldung';
 $string['task:cleanup_expired_qrcode'] = 'Abgelaufene QR-Login-Einträge bereinigen';
 $string['userauthenticated'] = 'Nutzer/in per QR-Code authentifiziert';
-$string['userauthorizedlogin'] = 'Benutzer hat die Anmeldung per QR-Code autorisiert';
+$string['userauthorizedlogin'] = 'Nutzer/in hat die Anmeldung per QR-Code autorisiert';
