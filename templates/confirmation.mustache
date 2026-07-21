@@ -27,7 +27,7 @@
 }}
 <div class="confirmation-container">
     {{! Confirmation message }}
-    <div class="confirmation-message mt-3 mb-3">{{#str}}confirmation, auth_qrcode{{/str}}</div>
+    <div class="confirmation-message mt-3 mb-3">{{#str}}confirmation, auth_qrcode, {{sitename}}{{/str}}</div>
     <ul class="token-info">
         <li>{{#str}}ip, auth_qrcode{{/str}}: {{ip}}</li>
         <li>{{#str}}os, auth_qrcode{{/str}}: {{os}}</li>
@@ -36,7 +36,6 @@
     {{! Confirmation buttons }}
     <form class="confirmation-buttons text-center" method="post">
         <input type="hidden" name="sesskey" value="{{sesskey}}">
-
         <button type="submit" name="allow" value="1" class="btn btn-primary w-50 mb-3">{{#str}}yes, core{{/str}}</button>
         <button type="submit" name="deny" value="1" class="btn btn-secondary w-50">{{#str}}no, core{{/str}}</button>
     </form>

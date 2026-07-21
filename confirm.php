@@ -24,7 +24,7 @@
 
 require_once(__DIR__ . '/../../config.php');
 
-global $PAGE, $OUTPUT, $USER;
+global $PAGE, $OUTPUT, $USER, $SITE;
 
 $token = required_param('token', PARAM_ALPHANUM);
 
@@ -89,6 +89,7 @@ if (!$tokeninfo) {
 }
 
 $tokeninfo['sesskey'] = sesskey();
+$tokeninfo['sitename'] = format_string($SITE->shortname);
 
 echo $OUTPUT->render_from_template('auth_qrcode/confirmation', $tokeninfo);
 echo $OUTPUT->footer();

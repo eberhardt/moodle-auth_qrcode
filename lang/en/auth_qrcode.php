@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['browser'] = 'Browser';
 $string['cannot_use_as_login_method'] = 'The \'{$a->auth}\' login method for user {$a->name} has been restored because the QR code authentication method cannot be used for standard logins. ';
-$string['confirmation'] = 'Do you try to log in to Moodle via QR-Code?';
+$string['confirmation'] = 'Do you try to log in to {$a} via QR-Code?';
 $string['expirationtime'] = 'QR-Code expiration time';
 $string['expirationtime_desc'] = 'The duration for which a generated login QR-Code is valid, in seconds. The expiration timer is reset to this value once when the user accesses the confirmation page on their mobile device for the first time. Lower values may not leave enough time for the user to scan the QR-Code, higher values may impact security.';
 $string['expired_or_rejected'] = 'Your login request either expired or was rejected, please scan a new QR code';
