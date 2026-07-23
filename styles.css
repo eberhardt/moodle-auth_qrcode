@@ -23,3 +23,16 @@
 .confirmation-message {
     font-size: larger;
 }
+
+.confirmationcode,
+#confirmationcode-input {
+    font-size: xxx-large;
+    font-family: var(--bs-font-monospace), monospace;
+    letter-spacing: .5ch;
+}
+
+#confirmationcode-input {
+    font-size: xx-large;
+    padding-left: 1ch;
+    padding-right: 0;
+}

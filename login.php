@@ -20,6 +20,8 @@
  * @package    auth_qrcode
  * @copyright  2026 MoodleMootDACH
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * {@noinspection PhpUnhandledExceptionInspection}
  */
 
 use auth_qrcode\qrcode_generator;
