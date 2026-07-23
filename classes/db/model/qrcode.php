@@ -77,8 +77,8 @@ class qrcode extends persistent {
         $record = new self();
         $record->set('token', $token);
         $record->set('initialsessionid', $sid);
-        $record->set('requester_os', $env['os']);
-        $record->set('requester_browser', $env['browser']);
+        $record->set('requesteros', $env['os']);
+        $record->set('requesterbrowser', $env['browser']);
         $record->set('status', 'created');
         $record->set('failedattempts', 0);
         $record->set('timecreated', time());
@@ -196,8 +196,8 @@ class qrcode extends persistent {
 
         return [
             'ip' => $session ? $session->lastip : 'Unknown',
-            'os' => $existing->get('requester_os'),
-            'browser' => $existing->get('requester_browser'),
+            'os' => $existing->get('requesteros'),
+            'browser' => $existing->get('requesterbrowser'),
         ];
     }
 
@@ -417,8 +417,8 @@ class qrcode extends persistent {
             'failedattempts' => ['type' => PARAM_INT],
             'timecreated' => ['type' => PARAM_INT],
             'timeexpires' => ['type' => PARAM_INT],
-            'requester_os' => ['type' => PARAM_TEXT],
-            'requester_browser' => ['type' => PARAM_TEXT],
+            'requesteros' => ['type' => PARAM_TEXT],
+            'requesterbrowser' => ['type' => PARAM_TEXT],
         ];
     }
 }
