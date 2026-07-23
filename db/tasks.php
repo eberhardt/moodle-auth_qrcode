@@ -31,7 +31,7 @@ $tasks = [
     [
         'classname' => cleanup_expired_qrcodes::class,
         'blocking' => 0,
-        'minute' => '0',
+        'minute' => 'R',
         'hour' => '*',
         'day' => '*',
         'dayofweek' => '*',
