@@ -13,11 +13,13 @@
 }
 
 .qrcode {
-    width: 80%;
+    width: 30%;
+    min-width: 150px;
+    max-width: 400px;
 }
 
 .qrcode-blured {
-    filter: blur(10px);
+    filter: blur(5px);
 }
 
 .confirmation-message {
