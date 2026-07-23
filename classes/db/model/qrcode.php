@@ -71,17 +71,12 @@ class qrcode extends persistent {
             return false;
         }
 
-        $sessionid = self::get_session_id($sid);
-        if ($sessionid === null) { // Check like this because sessionid could be 0 (zero).
-            return false;
-        }
-
         $ua = $useragent ?? \core_useragent::get_user_agent_string() ?: '';
         $env = self::detect_environment($ua);
 
         $record = new self();
         $record->set('token', $token);
-        $record->set('initial_sessionid', $sessionid);
+        $record->set('initialsessionid', $sid);
         $record->set('requester_os', $env['os']);
         $record->set('requester_browser', $env['browser']);
         $record->set('status', 'created');
@@ -197,7 +192,7 @@ class qrcode extends persistent {
             return false;
         }
 
-        $session = $DB->get_record('sessions', ['id' => $existing->get('initial_sessionid')], 'lastip');
+        $session = \core\session\manager::get_session_by_sid($existing->get('initialsessionid'));
 
         return [
             'ip' => $session ? $session->lastip : 'Unknown',
@@ -282,13 +277,9 @@ class qrcode extends persistent {
      * @throws dml_exception
      */
     public static function can_user_login(string $token, string $sid): string|stdClass {
-        $sessionid = self::get_session_id($sid);
-        if ($sessionid === null) { // Check like this because sessionid could be 0 (zero).
-            return 'expired';
-        }
         $existing = self::get_record([
             'token' => $token,
-            'initial_sessionid' => $sessionid,
+            'initialsessionid' => $sid,
         ]);
         if (!$existing || self::is_record_expired($existing)) {
             return 'expired';
@@ -329,19 +320,6 @@ class qrcode extends persistent {
         global $DB;
         $timestamp = $timestamp ?? time();
         $DB->delete_records_select(self::TABLE, 'timeexpires < ?', [$timestamp]);
-    }
-
-    /**
-     * Retrieves the database ID for a session ID string.
-     *
-     * @param string $sid The session ID string.
-     * @return int|null The session database ID or null if not found.
-     * @throws dml_exception
-     */
-    private static function get_session_id(string $sid): ?int {
-        global $DB;
-        $session = $DB->get_record('sessions', ['sid' => $sid], 'id');
-        return $session ? (int) $session->id : null;
     }
 
     /**
@@ -432,7 +410,7 @@ class qrcode extends persistent {
     protected static function define_properties(): array {
         return [
             'token' => ['type' => PARAM_ALPHANUMEXT],
-            'initial_sessionid' => ['type' => PARAM_INT],
+            'initialsessionid' => ['type' => PARAM_ALPHANUM],
             'status' => ['type' => PARAM_ALPHAEXT],
             'userid' => ['type' => PARAM_INT, 'null' => NULL_ALLOWED, 'default' => null],
             'confirmationcode' => ['type' => PARAM_ALPHANUM, 'null' => NULL_ALLOWED, 'default' => null],
